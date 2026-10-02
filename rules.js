@@ -1,7 +1,7 @@
 /**
  * Declarative Gmail filtering policy.
  *
- * V4.12.1 is evidence-driven from the 10,000-message / 24-month inventory.
+ * V4.13.0 is evidence-driven from the 10,000-message / 24-month inventory.
  *
  * Fields:
  *   name       Human-readable name shown by --plan.
@@ -724,5 +724,34 @@ export const rules = [
     query: "from:info@ezcontacts.com",
     trash: true,
   },
+
+  // Phase 8: low-volume, high-confidence promotional/newsletter senders.
+  { name: "Promo — US News offers", query: "from:updates@send-m.usnews.com", trash: true },
+  { name: "Promo — FrontRunners newsletter", query: "from:hello@frontrunners.ca", trash: true },
+  { name: "Promo — Sorcerics Kickstarter updates", query: "from:business@sorcerics.com", trash: true },
+  { name: "Promo — PIA marketing", query: "from:info@news.privateinternetaccess.com", trash: true },
+  { name: "Promo — No Compromise Gaming marketing", query: "from:hello@nocompromisegaming.com", trash: true },
+  { name: "Promo — Evasive Motorsports marketing", query: "from:sales@evasivemotorsports.com", trash: true },
+  { name: "Promo — Chewy marketing", query: "from:chewy@paws.chewy.com", trash: true },
+  { name: "Promo — Ultimate Guitar offers", query: "from:info@mail.ultimate-guitar.com", trash: true },
+  { name: "Promo — Yuka newsletter", query: "from:hello@yuka.io", trash: true },
+  { name: "Promo — Hone Health newsletter", query: "from:newsletter@honehealth.com", trash: true },
+  { name: "Promo — Trust & Will marketing", query: "from:support@em.trustandwill.com", trash: true },
+  { name: "Promo — Temple St. Clair newsletter", query: "from:no-reply@templestclair.com", trash: true },
+  { name: "Promo — MotoLoot reviews", query: "from:crew@motoloot.com", trash: true },
+  { name: "Promo — Progress product marketing", query: "from:progress@products.progress.com", trash: true },
+  { name: "Promo — Valley Hive events", query: "from:info@thevalleyhive.com", trash: true },
+  { name: "Promo — VEVOR secondary marketing", query: "from:marketing@ses.vevor.com", trash: true },
+  { name: "Promo — RevZilla Sailthru marketing", query: "from:revzilla@mail.sailthru.com", trash: true },
+  { name: "Promo — EMCRA newsletter", query: "from:info@emcra.eu", trash: true },
+  { name: "Promo — LiveScribe marketing", query: "from:marketing@email.livescribe.com", trash: true },
+  { name: "Promo — Frontier deals", query: "from:deals@mkt.flyfrontier.com", trash: true },
+  { name: "Promo — Holgates marketing", query: "from:marketing@holgates.co.uk", trash: true },
+  { name: "Promo — Georgia Renaissance Festival", query: "from:info@garenfest.com", trash: true },
+  { name: "Promo — Throttle Tiger marketing", query: "from:support@throttletiger.com", trash: true },
+  { name: "Promo — MAGFAST marketing", query: "from:hello@magfast.com", trash: true },
+  { name: "Promo — Steve Madden Mexico marketing", query: "from:info@send.stevemadden.com.mx", trash: true },
+  { name: "Promo — Winn-Dixie offers", query: "from:reply@mail.winndixie.com", trash: true },
+  { name: "Promo — LittleForBig releases", query: "from:service@littleforbig.com", trash: true },
 
 ];
