@@ -1,7 +1,7 @@
 /**
  * Declarative Gmail filtering policy.
  *
- * V4.9 is evidence-driven from the 10,000-message / 24-month inventory.
+ * V4.9.1 is evidence-driven from the 10,000-message / 24-month inventory.
  *
  * Fields:
  *   name       Human-readable name shown by --plan.
@@ -268,7 +268,7 @@ export const rules = [
   },
   {
     name: "Promo — AutoZone marketing",
-    query: "from:autozone@em.autozone.com",
+    query: 'from:autozone@em.autozone.com -subject:"verification code"',
     trash: true,
   },
   {
