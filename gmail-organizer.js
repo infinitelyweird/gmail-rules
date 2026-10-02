@@ -1,5 +1,5 @@
 /**
- * Gmail Rules Installer V4.1.1
+ * Gmail Rules Installer V4.5.0
  *
  * Adds:
  * - Idempotent exact-filter detection.
@@ -13,7 +13,7 @@ import {google} from "googleapis";
 import {getAuth} from "./auth.js";
 import {rules} from "./rules.js";
 
-const MODES = ["--plan", "--backup", "--apply", "--restore", "--cleanup-legacy", "--migrate-legal"];
+const MODES = ["--plan", "--backup", "--apply", "--restore", "--cleanup-legacy", "--migrate-legal", "--migrate-backup"];
 const mode = process.argv.find((arg) => MODES.includes(arg)) || "--plan";
 const BACKUP = "gmail-filter-backup-v4.json";
 
@@ -44,6 +44,9 @@ const OLD_LEGAL_QUERIES = new Set([
   'subject:(dispute OR "legal notice" OR settlement OR claim) -subject:(newsletter OR offer OR sale)',
   'subject:("dispute" OR "legal notice" OR settlement OR claim) -subject:(newsletter OR offer OR sale)',
 ]);
+const OLD_BACKUP_QUERY =
+  'subject:("backup status report" OR "backup completed" OR "successful backup")';
+
 const gmail = google.gmail({version: "v1", auth: await getAuth()});
 
 function normalizeFilter(filter) {
@@ -164,6 +167,41 @@ if (mode === "--migrate-legal") {
   process.exit();
 }
 
+if (mode === "--migrate-backup") {
+  const state = await snapshot();
+  const backupLabel = state.labels.find((label) => label.name === "Services/Backup Reports");
+  if (!backupLabel) throw new Error("Services/Backup Reports label not found.");
+
+  const matches = state.filters.filter((filter) => {
+    const n = normalizeFilter(filter);
+    return n.criteria.query === OLD_BACKUP_QUERY &&
+      n.action.addLabelIds.length === 1 &&
+      n.action.addLabelIds.includes(backupLabel.id) &&
+      n.action.removeLabelIds.length === 1 &&
+      n.action.removeLabelIds.includes("INBOX") &&
+      !n.action.forward;
+  });
+
+  console.log("V4.5.0 BACKUP FILTER MIGRATION — " + matches.length +
+    " obsolete exact filter(s) found.");
+  for (const filter of matches) {
+    console.log("WOULD DELETE " + filter.id + " | query=" +
+      (filter.criteria?.query || "(none)"));
+  }
+  if (!process.argv.includes("--yes")) {
+    console.log("Preview only. Add --yes to delete exactly the obsolete broad backup filter.");
+    process.exit();
+  }
+  if (matches.length !== 1) {
+    throw new Error("Expected exactly 1 obsolete backup filter; refusing migration.");
+  }
+  await backup();
+  await gmail.users.settings.filters.delete({userId: "me", id: matches[0].id});
+  console.log("DELETED obsolete generic backup filter " + matches[0].id);
+  console.log("Now run npm run apply to install the narrowed replacement.");
+  process.exit();
+}
+
 if (mode === "--restore") {
   const backedUp = JSON.parse(await fs.readFile(BACKUP, "utf8"));
   const current =
@@ -239,7 +277,7 @@ function auditLegacyFilters(filters) {
 }
 
 console.log(
-  "V4.3.3 " + mode.slice(2).toUpperCase() + " — " +
+  "V4.5.0 " + mode.slice(2).toUpperCase() + " — " +
     state.filters.length + " existing filters\n",
 );
 
