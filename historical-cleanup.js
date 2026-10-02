@@ -143,4 +143,5 @@ for (const {rule, ids: matchedIds} of plans) {
 }
 console.log("\nHistorical cleanup complete.");
 console.log("Rule/message operations applied: " + operations);
-console.log("Action-matched messages were protected from Trash and Archive.");\nconsole.log("Trash actions only moved messages to Gmail Trash; nothing was permanently deleted.");
+console.log("Action-matched messages were protected from Trash and Archive.");
+console.log("Trash actions only moved messages to Gmail Trash; nothing was permanently deleted.");
