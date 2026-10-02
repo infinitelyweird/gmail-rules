@@ -1,7 +1,7 @@
 /**
  * Declarative Gmail filtering policy.
  *
- * V4.14.0 is evidence-driven from the 10,000-message / 24-month inventory.
+ * V4.14.1 is evidence-driven from the 10,000-message / 24-month inventory.
  *
  * Fields:
  *   name       Human-readable name shown by --plan.
@@ -756,7 +756,7 @@ export const rules = [
 
   // Phase 9: deep-tail, high-confidence promotional/newsletter senders.
   { name: "Promo — Submagic product marketing", query: "from:support@submagic.co", trash: true },
-  { name: "Promo — 1-800-Flowers birthday reminders", query: "from:1800flowers@em.1800flowers.com", trash: true },
+  { name: "Promo — 1-800-Flowers birthday reminders", query: 'from:1800flowers@em.1800flowers.com -subject:("has shipped" OR "have shipped" OR "was shipped" OR "shipping confirmation" OR "shipment update" OR "out for delivery" OR "has been delivered" OR "was delivered" OR "package delivered" OR "order delivered" OR "tracking number")', trash: true },
   { name: "Promo — Runway Room marketing", query: "from:info@rr.runwayroom.com", trash: true },
   { name: "Promo — PYH Shopify marketing (m)", query: "from:store+60968271962@m.shopifyemail.com", trash: true },
   { name: "Promo — Cycle Gear Sailthru", query: "from:cyclegear@mail.sailthru.com", trash: true },
@@ -777,7 +777,7 @@ export const rules = [
   { name: "Promo — Beans Moto Booth marketing", query: "from:csteam@beansmotobooth.com", trash: true },
   { name: "Promo — Walt Disney Records", query: "from:waltdisneyrecords@em.waltdisneyrecords.com", trash: true },
   { name: "Promo — HeyGen events", query: "from:no_reply@learn.heygen.com", trash: true },
-  { name: "Promo — Subimods marketing", query: "from:support@subimods.com", trash: true },
+  { name: "Promo — Subimods marketing", query: 'from:support@subimods.com -subject:("has shipped" OR "have shipped" OR "was shipped" OR "shipping confirmation" OR "shipment update" OR "out for delivery" OR "has been delivered" OR "was delivered" OR "package delivered" OR "order delivered" OR "tracking number")', trash: true },
   { name: "Promo — Postman offers", query: "from:notifications@mail.postman.com", trash: true },
 
 ];
