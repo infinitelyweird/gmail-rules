@@ -1,7 +1,7 @@
 /**
  * Declarative Gmail filtering policy.
  *
- * V4.9.1 is evidence-driven from the 10,000-message / 24-month inventory.
+ * V4.10.0 is evidence-driven from the 10,000-message / 24-month inventory.
  *
  * Fields:
  *   name       Human-readable name shown by --plan.
@@ -444,6 +444,44 @@ export const rules = [
   {
     name: "Promo — Macorner marketing",
     query: "from:no-reply@macorner.co",
+    trash: true,
+  },
+
+  // Phase 5: conservative sender-wide bulk rules. Transactional/security
+  // addresses for these brands remain separate where observed.
+  {
+    name: "Promo — Peacock programming",
+    query: "from:hello@email.peacocktv.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Instacart marketing",
+    query: "from:no-reply@customers.instacartemail.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Wilt Clothing marketing",
+    query: "from:info@wiltclothing.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Weather Channel Weekly Brief",
+    query: "from:weeklybrief@news.weather.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Afterpay marketing",
+    query: "from:afterpay@nanews.e.afterpay.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Survival First Aid Kits marketing",
+    query: "from:hello@email.survivalfirstaidkits.net.au",
+    trash: true,
+  },
+  {
+    name: "Promo — Euhomy TikTok Shop marketing",
+    query: "from:euhomy@tiktokshop.com",
     trash: true,
   },
 
