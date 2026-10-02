@@ -16,7 +16,7 @@ import {google} from "googleapis";
 /*
  * gmail.settings.basic: manage Gmail filters.
  * gmail.labels: manage labels used by rules.
- * gmail.readonly: search messages and read From/Subject metadata.
+ * gmail.modify: search messages and apply historical labels/archive/trash actions.
  *
  * gmail.metadata is not enough for inventory.js because Gmail does not permit
  * messages.list q searches when authenticated only with the metadata scope.
@@ -24,12 +24,12 @@ import {google} from "googleapis";
 export const SCOPES = [
   "https://www.googleapis.com/auth/gmail.settings.basic",
   "https://www.googleapis.com/auth/gmail.labels",
-  "https://www.googleapis.com/auth/gmail.readonly",
+  "https://www.googleapis.com/auth/gmail.modify",
 ];
 
 /**
  * Reuse token.json when possible. If it is missing, invalid, or predates the
- * gmail.readonly scope, launch Google's local OAuth flow and save a new token.
+ * gmail.modify scope, launch Google's local OAuth flow and save a new token.
  *
  * If scopes change in the future, deleting token.json safely forces
  * reauthorization on the next run.
@@ -40,7 +40,7 @@ export async function getAuth() {
 
   try {
     const savedToken = JSON.parse(await fs.readFile(tokenPath, "utf8"));
-    if (!savedToken.scopes?.includes("https://www.googleapis.com/auth/gmail.readonly")) {
+    if (!savedToken.scopes?.includes("https://www.googleapis.com/auth/gmail.modify")) {
       throw new Error("OAuth scope upgrade required");
     }
     return google.auth.fromJSON(savedToken);
