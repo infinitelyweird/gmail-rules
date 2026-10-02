@@ -1,5 +1,5 @@
 /**
- * Gmail Rules Installer V4.7.0
+ * Gmail Rules Installer V4.8.0
  *
  * Adds:
  * - Idempotent exact-filter detection.
@@ -314,7 +314,7 @@ function auditLegacyFilters(filters) {
 }
 
 console.log(
-  "V4.7.0 " + mode.slice(2).toUpperCase() + " — " +
+  "V4.8.0 " + mode.slice(2).toUpperCase() + " — " +
     state.filters.length + " existing filters\n",
 );
 
