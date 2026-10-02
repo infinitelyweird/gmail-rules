@@ -12,9 +12,30 @@ import {google} from "googleapis";
 import {getAuth} from "./auth.js";
 import {rules} from "./rules.js";
 
-const MODES = ["--plan", "--backup", "--apply", "--restore"];
+const MODES = ["--plan", "--backup", "--apply", "--restore", "--cleanup-legacy"];
 const mode = process.argv.find((arg) => MODES.includes(arg)) || "--plan";
 const BACKUP = "gmail-filter-backup-v4.json";
+
+// Exact legacy filter IDs reviewed from the V4.1 audit. Cleanup is deliberately
+// allow-listed: nothing merely "similar" is removed.
+const LEGACY_CLEANUP_IDS = new Set([
+  "ANe1Bmh5UYxTcM4Rc2w9F5Htt3IhUn8Wvq8Kkw", // Travelocity: mark read + trash
+  "ANe1BmgJqYzGUkYp8V7zswTlhhGfoNQyTCSDcA", // American Airlines: trash
+  "ANe1BmhuHAvXibUPORyefMz_mtRIMobJ9q4yWQ", // Travelocity: trash
+  "ANe1BmjqZzdgG6NvLT2vmhpsNmRPRtAMXu13dA", // Code42: mark read
+  "ANe1BmgGneJy5kTcSDL6GOoivWZTjFg622pW2spdsPgNCSBTlcYLyFaiZOu55EW9aATkIi9o4Q", // Nectar: star
+  "ANe1Bmi6OPP9kcTfrgzMhPgUexuND5o_s64ZHWU52G5wPt8XRH_QtMW3CZWoGxrPBethGSDLEw", // Temu/USPS: star
+  "ANe1BmguVBfqe-LXbwKa0Z0kJAJi-Z-a8AbCP2j6kzs1pG2btdQZhVHio9_oS8PETPYjc60jKw", // GitHub: mark read
+  "ANe1BmgdIqwoJTKNpDuPNpCkzqVn4E8pxdbsc0hEXgoaVs1KL2D5_ncNOFhT03QY1Nx1Pc1TcQ", // January: mark read
+  "ANe1BmhE1PlR-u-zILWIvD95w7tCs2Fq0dxZroIHC2X3nfHkJbQu6L4mxsLhzsZfVHKDXEBmgg", // FSA Store: mark read
+  "ANe1BmhdTUeQD4PcKqUMTq-Lx8y5f7y1hPz-RuJQBHFvqADoAMZfATKNR0b13vIMa-xA-owyig", // Netflix: mark read
+  "ANe1BmiqPo3rVnTL9kV7N_tqj-m4_zw7vmc58afq1AAbUnLLCw99FNVJYcMDyNrBdfl7Ju_XQA", // BestBuy: star
+  "ANe1BmgfFwNB3eql8UIGO81LxzMsEeb-7wimpNcXL0fE-SeelSC-sFvbHZ97ySTP4GYC6uyqtA", // BestBuy: mark read
+  "ANe1BmjLDyXsc0M_D43eeN8NrlWmUPlYiAS8PXEX-uNZ1tng14NuJk4PEiMPKSZAgMsOvjtcVQ", // Klarna: mark read
+  "ANe1BmilpQFZXGC2p4Z_ewNke4NkNiI9vdeW7EDzXETRYa9ncdRLObpZ1czA6yDhe2udJtHMcQ", // Best Egg: mark read + star
+  "ANe1BmivT7g3Jtp7_dpjI6h4YQUrob_su5gm_kZkdzlXG2MDw5KgXzipj1UyBgZoxtX5I6qc0w", // Guest Reservations: mark read
+  "ANe1BmgeBwz9RpyXWBt1GCHysFvOFtXQ5c5xNANtFGb6lUOESPNrJoRTyFq1bezIfh0QzbxZiw", // Jackbox: mark read + star
+]);
 const gmail = google.gmail({version: "v1", auth: await getAuth()});
 
 function normalizeFilter(filter) {
@@ -63,6 +84,24 @@ async function backup() {
 
 if (mode === "--backup") {
   await backup();
+  process.exit();
+}
+
+if (mode === "--cleanup-legacy") {
+  const state = await snapshot();
+  const matches = state.filters.filter((filter) => LEGACY_CLEANUP_IDS.has(filter.id));
+  console.log("Legacy cleanup: " + matches.length + " reviewed filters found.");
+  if (!process.argv.includes("--yes")) {
+    for (const filter of matches) console.log("WOULD DELETE " + filter.id);
+    console.log("Preview only. Add --yes to delete exactly these allow-listed legacy filters.");
+    process.exit();
+  }
+  await backup();
+  for (const filter of matches) {
+    await gmail.users.settings.filters.delete({userId: "me", id: filter.id});
+    console.log("DELETED " + filter.id);
+  }
+  console.log("Legacy cleanup complete: " + matches.length + " filters deleted.");
   process.exit();
 }
 
