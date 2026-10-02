@@ -1,5 +1,5 @@
 /**
- * Historical mailbox policy engine — V4.3.1
+ * Historical mailbox policy engine — V4.3.2
  *
  * Safe by default: `npm run history:plan` counts matches and changes nothing.
  * Execution requires BOTH --apply and --yes.
@@ -89,7 +89,7 @@ const uniqueTrash = new Set();
 const uniqueArchive = new Set();
 const uniqueAction = new Set();
 
-console.log("V4.3.1 HISTORICAL CLEANUP " + (execute ? "APPLY" : "PLAN"));
+console.log("V4.3.2 HISTORICAL CLEANUP " + (execute ? "APPLY" : "PLAN"));
 console.log("Scope: all matching mail except existing Trash/Spam.\n");
 
 for (const rule of rules) {
@@ -119,6 +119,46 @@ console.log("Safe-to-archive unique:     " + safeArchive.size);
 if (trashAction.size) {
   console.log("HIGH-RISK: " + trashAction.size +
     " message(s) match Trash and Action; execution protects them from Trash.");
+}
+
+async function getHeaders(id) {
+  const response = await gmail.users.messages.get({
+    userId: "me",
+    id,
+    format: "metadata",
+    metadataHeaders: ["From", "Subject"],
+  });
+  const headers = new Map(
+    (response.data.payload?.headers || []).map((h) => [h.name.toLowerCase(), h.value]),
+  );
+  return {
+    from: headers.get("from") || "(unknown)",
+    subject: headers.get("subject") || "(no subject)",
+  };
+}
+
+function matchingRuleNames(id, predicate) {
+  return plans
+    .filter((plan) => predicate(plan.rule) && plan.ids.includes(id))
+    .map((plan) => plan.rule.name);
+}
+
+if (trashAction.size) {
+  console.log("\nTRASH vs ACTION COLLISION DETAILS");
+  console.log("Metadata only: From + Subject + matching rule names.\n");
+  let n = 0;
+  for (const id of trashAction) {
+    n++;
+    const meta = await getHeaders(id);
+    const trashRules = matchingRuleNames(id, (rule) => Boolean(rule.trash));
+    const actionRules = matchingRuleNames(id, (rule) => !rule.trash && !rule.archive);
+    console.log("#" + n);
+    console.log("From: " + meta.from);
+    console.log("Subject: " + meta.subject);
+    console.log("Trash rule(s): " + trashRules.join("; "));
+    console.log("Action rule(s): " + actionRules.join("; "));
+    console.log("");
+  }
 }
 
 if (!execute) {
