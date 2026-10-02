@@ -1,7 +1,7 @@
 /**
  * Declarative Gmail filtering policy.
  *
- * V4.11.0 is evidence-driven from the 10,000-message / 24-month inventory.
+ * V4.11.1 is evidence-driven from the 10,000-message / 24-month inventory.
  *
  * Fields:
  *   name       Human-readable name shown by --plan.
@@ -574,7 +574,7 @@ export const rules = [
   },
   {
     name: "Promo — Ruggable newsletter",
-    query: "from:newsletters@ruggable.com",
+    query: 'from:newsletters@ruggable.com -subject:("has shipped" OR "have shipped" OR "was shipped" OR "shipping confirmation" OR "shipment update" OR "out for delivery" OR "has been delivered" OR "was delivered" OR "package delivered" OR "order delivered" OR "tracking number")',
     trash: true,
   },
   {
