@@ -291,4 +291,62 @@ export const rules = [
     query: "from:microcenter@email.microcenter.com",
     trash: true,
   },
+
+  // Phase 3: additional high-confidence bulk/newsletter senders from the same
+  // 10K inventory. Mixed financial/travel senders remain intentionally excluded.
+  {
+    name: "Promo — UKLASH marketing",
+    query: "from:mail@uklash.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Extreme Restraints newsletter",
+    query: "from:newsletter@extremerestraints.com",
+    trash: true,
+  },
+  {
+    name: "Promo — USA Today Daily Briefing",
+    query: "from:dailybriefing@reply.usatoday.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Oh My Cream marketing",
+    query: "from:contact@ohmycream.com",
+    trash: true,
+  },
+  {
+    name: "Promo — History Facts newsletter",
+    query: "from:hello@historyfacts.com",
+    trash: true,
+  },
+  {
+    name: "Promo — InboxDollars paid email",
+    query: "from:paidemail@inboxdollars.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Smoke Cartel marketing",
+    query: "from:hello@smokecartel.com",
+    trash: true,
+  },
+  {
+    name: "Promo — AcuRite marketing",
+    query: "from:marketing@sky.acurite.com",
+    trash: true,
+  },
+  {
+    name: "Promo — XEOX newsletter",
+    query: "from:newsletter@xeox.com",
+    trash: true,
+  },
+  {
+    name: "Promo — HBO Max marketing",
+    query: "from:hbomax@mail.hbomax.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Redline360 marketing",
+    query: "from:support@redline360.com",
+    trash: true,
+  },
 ];
