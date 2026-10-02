@@ -1,5 +1,5 @@
 /**
- * Historical mailbox policy engine — V4.4.1
+ * Historical mailbox policy engine — V4.4.2
  *
  * Safe by default: `npm run history:plan` counts matches and changes nothing.
  * Execution requires BOTH --apply and --yes.
@@ -56,21 +56,25 @@ async function listIds(query) {
   return ids;
 }
 
-function stateQuery(rule, labelName) {
+function stateQueries(rule) {
+  // IMPORTANT: Gmail's search parser does not reliably scope a complex base
+  // query when OR-ing several "missing state" clauses together. Keep every
+  // state test as a separate query, then union the resulting IDs in code.
   const base = "(" + rule.query + ") -in:trash -in:spam";
-  const missing = [];
-  if (rule.trash) missing.push("(" + base + ") -in:trash");
-  if (rule.archive) missing.push("(" + base + ") in:inbox");
-  if (rule.label && labelName) missing.push("(" + base + ') -label:"' + labelName + '"');
-  if (rule.important) missing.push("(" + base + ") -is:important");
-  return missing.length === 1 ? missing[0] : "{" + missing.join(" ") + "}";
+  const queries = [];
+  if (rule.trash) queries.push(base); // base already excludes existing Trash.
+  if (rule.archive) queries.push(base + " in:inbox");
+  if (rule.label) queries.push(base + ' -label:"' + rule.label + '"');
+  if (rule.important) queries.push(base + " -is:important");
+  return queries;
 }
 
 async function idsNeedingRule(rule) {
-  // Use Gmail search predicates to find only messages missing desired state.
-  // This avoids one messages.get request per message and stays well below the
-  // per-user query-cost limit even on large mailboxes.
-  return listIds(stateQuery(rule, rule.label));
+  const needs = new Set();
+  for (const query of stateQueries(rule)) {
+    for (const id of await listIds(query)) needs.add(id);
+  }
+  return [...needs];
 }
 
 function actionName(rule) {
@@ -119,7 +123,7 @@ const uniqueTrash = new Set();
 const uniqueArchive = new Set();
 const uniqueAction = new Set();
 
-console.log("V4.4.1 HISTORICAL CLEANUP " + (execute ? "APPLY" : "PLAN"));
+console.log("V4.4.2 HISTORICAL CLEANUP " + (execute ? "APPLY" : "PLAN"));
 console.log("Scope: all matching mail except existing Trash/Spam.\n");
 
 for (const rule of rules) {
@@ -130,6 +134,15 @@ for (const rule of rules) {
   plans.push({rule, ids, needs, action});
   const target = rule.trash ? uniqueTrash : rule.archive ? uniqueArchive : uniqueAction;
   for (const id of ids) target.add(id);
+  // Defensive invariant: a state query must never escape the rule's match set.
+  const matched = new Set(ids);
+  const escaped = needs.filter((id) => !matched.has(id));
+  if (escaped.length) {
+    throw new Error(
+      "State query escaped rule scope for " + rule.name +
+      ": " + escaped.length + " NEEDS id(s) were not in MATCHED."
+    );
+  }
   console.log(
     action.padEnd(7) +
     " MATCHED " + String(ids.length).padStart(6) +
