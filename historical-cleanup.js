@@ -1,5 +1,5 @@
 /**
- * Historical mailbox policy engine — V4.4.0
+ * Historical mailbox policy engine — V4.4.1
  *
  * Safe by default: `npm run history:plan` counts matches and changes nothing.
  * Execution requires BOTH --apply and --yes.
@@ -43,31 +43,34 @@ async function listMessages(query) {
   return messages;
 }
 
-async function getLabelIds(id) {
-  const response = await gmail.users.messages.get({
-    userId: "me",
-    id,
-    format: "minimal",
-  });
-  return new Set(response.data.labelIds || []);
+async function listIds(query) {
+  const ids = [];
+  let pageToken;
+  do {
+    const response = await gmail.users.messages.list({
+      userId: "me", q: query, maxResults: 500, pageToken,
+    });
+    ids.push(...(response.data.messages || []).map((m) => m.id));
+    pageToken = response.data.nextPageToken;
+  } while (pageToken);
+  return ids;
 }
 
-async function idsNeedingRule(rule, ids, labels) {
-  const desiredLabelId = rule.label ? labels.get(rule.label) : undefined;
-  const needs = [];
-  // State checks are intentionally bounded in parallel to avoid hammering Gmail.
-  for (const batch of chunks(ids, 25)) {
-    const states = await Promise.all(batch.map(async (id) => [id, await getLabelIds(id)]));
-    for (const [id, labelIds] of states) {
-      let pending = false;
-      if (rule.trash) pending ||= !labelIds.has("TRASH");
-      if (rule.archive) pending ||= labelIds.has("INBOX");
-      if (rule.label && desiredLabelId) pending ||= !labelIds.has(desiredLabelId);
-      if (rule.important) pending ||= !labelIds.has("IMPORTANT");
-      if (pending) needs.push(id);
-    }
-  }
-  return needs;
+function stateQuery(rule, labelName) {
+  const base = "(" + rule.query + ") -in:trash -in:spam";
+  const missing = [];
+  if (rule.trash) missing.push("(" + base + ") -in:trash");
+  if (rule.archive) missing.push("(" + base + ") in:inbox");
+  if (rule.label && labelName) missing.push("(" + base + ') -label:"' + labelName + '"');
+  if (rule.important) missing.push("(" + base + ") -is:important");
+  return missing.length === 1 ? missing[0] : "{" + missing.join(" ") + "}";
+}
+
+async function idsNeedingRule(rule) {
+  // Use Gmail search predicates to find only messages missing desired state.
+  // This avoids one messages.get request per message and stays well below the
+  // per-user query-cost limit even on large mailboxes.
+  return listIds(stateQuery(rule, rule.label));
 }
 
 function actionName(rule) {
@@ -116,15 +119,14 @@ const uniqueTrash = new Set();
 const uniqueArchive = new Set();
 const uniqueAction = new Set();
 
-console.log("V4.4.0 HISTORICAL CLEANUP " + (execute ? "APPLY" : "PLAN"));
+console.log("V4.4.1 HISTORICAL CLEANUP " + (execute ? "APPLY" : "PLAN"));
 console.log("Scope: all matching mail except existing Trash/Spam.\n");
 
 for (const rule of rules) {
   const query = "(" + rule.query + ") -in:trash -in:spam";
-  const messages = await listMessages(query);
-  const ids = messages.map((m) => m.id);
+  const ids = await listIds(query);
   const action = actionName(rule);
-  const needs = await idsNeedingRule(rule, ids, labels);
+  const needs = await idsNeedingRule(rule);
   plans.push({rule, ids, needs, action});
   const target = rule.trash ? uniqueTrash : rule.archive ? uniqueArchive : uniqueAction;
   for (const id of ids) target.add(id);
