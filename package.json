@@ -12,7 +12,8 @@
     "restore": "node gmail-organizer.js --restore",
     "cleanup:legacy": "node gmail-organizer.js --cleanup-legacy",
     "history:plan": "node historical-cleanup.js",
-    "history:apply": "node historical-cleanup.js --apply"
+    "history:apply": "node historical-cleanup.js --apply",
+    "migrate:legal": "node gmail-organizer.js --migrate-legal"
   },
   "dependencies": {
     "@google-cloud/local-auth": "^3.0.1",
