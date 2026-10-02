@@ -1,6 +1,6 @@
 {
-  "name": "gmail-rules-installer-v3-1",
-  "version": "3.1.0",
+  "name": "gmail-rules-installer",
+  "version": "4.0.0",
   "private": true,
   "type": "module",
   "scripts": {
