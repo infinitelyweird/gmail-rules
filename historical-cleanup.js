@@ -1,5 +1,5 @@
 /**
- * Historical mailbox policy engine — V4.8.0
+ * Historical mailbox policy engine — V4.8.1
  *
  * Safe by default: `npm run history:plan` counts matches and changes nothing.
  * Execution requires BOTH --apply and --yes.
@@ -123,7 +123,7 @@ const uniqueTrash = new Set();
 const uniqueArchive = new Set();
 const uniqueAction = new Set();
 
-console.log("V4.8.0 HISTORICAL CLEANUP " + (execute ? "APPLY" : "PLAN"));
+console.log("V4.8.1 HISTORICAL CLEANUP " + (execute ? "APPLY" : "PLAN"));
 console.log("Scope: all matching mail except existing Trash/Spam.\n");
 
 for (const rule of rules) {
@@ -190,6 +190,24 @@ function matchingRuleNames(id, predicate) {
   return plans
     .filter((plan) => predicate(plan.rule) && plan.ids.includes(id))
     .map((plan) => plan.rule.name);
+}
+
+if (trashArchive.size) {
+  console.log("\nTRASH vs ARCHIVE COLLISION DETAILS");
+  console.log("Metadata only: From + Subject + matching rule names.\n");
+  let n = 0;
+  for (const id of trashArchive) {
+    n++;
+    const meta = await getHeaders(id);
+    const trashRules = matchingRuleNames(id, (rule) => Boolean(rule.trash));
+    const archiveRules = matchingRuleNames(id, (rule) => Boolean(rule.archive));
+    console.log("#" + n);
+    console.log("From: " + meta.from);
+    console.log("Subject: " + meta.subject);
+    console.log("Trash rule(s): " + trashRules.join("; "));
+    console.log("Archive rule(s): " + archiveRules.join("; "));
+    console.log("");
+  }
 }
 
 if (trashAction.size) {
