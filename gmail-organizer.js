@@ -1,11 +1,12 @@
 /**
- * Gmail Rules Installer V4.1
+ * Gmail Rules Installer V4.1.1
  *
  * Adds:
  * - Idempotent exact-filter detection.
  * - TRASH rules for high-confidence promotional senders.
  * - Read-only legacy-filter audit warnings.
  * - A pre-restore safety backup.
+ * - Automatic rotation of the previous canonical backup before overwrite.
  */
 import fs from "node:fs/promises";
 import {google} from "googleapis";
@@ -77,6 +78,21 @@ async function snapshot() {
 
 async function backup() {
   const state = await snapshot();
+
+  // Preserve the previous recovery point before replacing the canonical
+  // "latest" backup. This matters during multi-step migrations: cleanup may
+  // create a 62-filter backup, then apply may create a 46-filter backup.
+  // Without rotation, the more valuable pre-migration snapshot would be lost.
+  try {
+    await fs.access(BACKUP);
+    const rotated = "gmail-filter-backup-v4-" +
+      new Date().toISOString().replaceAll(":", "-") + ".json";
+    await fs.copyFile(BACKUP, rotated);
+    console.log("Preserved previous backup as: " + rotated);
+  } catch {
+    // No previous backup yet; nothing to rotate.
+  }
+
   await fs.writeFile(BACKUP, JSON.stringify(state, null, 2));
   console.log("Backup: " + BACKUP + " (" + state.filters.length + " filters)");
   return state;
