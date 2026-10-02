@@ -1,7 +1,7 @@
 /**
  * Declarative Gmail filtering policy.
  *
- * V4.11.1 is evidence-driven from the 10,000-message / 24-month inventory.
+ * V4.12.0 is evidence-driven from the 10,000-message / 24-month inventory.
  *
  * Fields:
  *   name       Human-readable name shown by --plan.
@@ -590,6 +590,138 @@ export const rules = [
   {
     name: "Promo — Monster Fairings marketing",
     query: "from:info@monsterfairings.com",
+    trash: true,
+  },
+
+  // Phase 7: lower-volume evidence-reviewed promotional/content senders.
+  {
+    name: "Promo — HP Academy Ben",
+    query: "from:ben@hpacademy.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Inslogic 3D marketing",
+    query: "from:info@inslogic3d.com",
+    trash: true,
+  },
+  {
+    name: "Promo — iHeart newsletter",
+    query: "from:newsletters@e.iheart.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Hard Rock Biloxi offers",
+    query: "from:offers@e.hardrock-biloxi.com",
+    trash: true,
+  },
+  {
+    name: "Promo — SociableKIT marketing",
+    query: "from:support@sociablekit.com",
+    trash: true,
+  },
+  {
+    name: "Promo — OfferUp newsletter",
+    query: "from:news@discover.offerup.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Apartment List recommendations",
+    query: "from:info@emp.apartmentlist.com",
+    trash: true,
+  },
+  {
+    name: "Promo — StayCloaked newsletter",
+    query: "from:newsletter.again.game.loud@staycloaked.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Hills Food Stores weekly ads",
+    query: "from:hills1@hillsfoodstores.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Shopify 3D printing store marketing",
+    query: "from:store+15265071190@g.shopifyemail.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Hero Forge news",
+    query: "from:news@heroforge.com",
+    trash: true,
+  },
+  {
+    name: "Promo — NVIDIA gaming newsletter",
+    query: "from:gaming@nvgaming.nvidia.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Subaru Outback forum mail",
+    query: "from:noreply@mail.subaruoutback.org",
+    trash: true,
+  },
+  {
+    name: "Promo — Sophos news",
+    query: "from:news@sophos.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Scribd recommendations",
+    query: "from:hello@hello.scribd.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Canna Style marketing",
+    query: "from:info@shopcannastyle.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Radium Auto news",
+    query: "from:press-radiumauto.com@shared1.ccsend.com",
+    trash: true,
+  },
+  {
+    name: "Promo — O'Reilly rewards marketing",
+    query: "from:orewards@email.oreillyauto.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Coinbase marketing",
+    query: "from:info@mail.coinbase.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Nintendo news",
+    query: "from:nintendo-noreply@nintendo.net",
+    trash: true,
+  },
+  {
+    name: "Promo — GNC PRO marketing",
+    query: "from:gnc@gnc.gnc.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Audials news",
+    query: "from:news@audials.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Paramount Plus marketing",
+    query: "from:contact@email.paramountplus.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Thangs user updates",
+    query: "from:thangs-user-updates@thangs.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Delta marketing",
+    query: "from:deltaairlines@o.delta.com",
+    trash: true,
+  },
+  {
+    name: "Promo — EZContacts marketing",
+    query: "from:info@ezcontacts.com",
     trash: true,
   },
 
