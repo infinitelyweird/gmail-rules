@@ -1,11 +1,11 @@
 /**
- * Historical mailbox policy engine — V4.3
+ * Historical mailbox policy engine — V4.3.1
  *
  * Safe by default: `npm run history:plan` counts matches and changes nothing.
  * Execution requires BOTH --apply and --yes.
  *
- * Historical actions mirror rules.js. Trash means move to Gmail Trash, never
- * permanent deletion. Searches always exclude messages already in Trash/Spam.
+ * Historical actions mirror rules.js. Action/LABEL matches are protected from
+ * historical Trash and Archive actions. Trash is never permanent deletion.
  */
 import {google} from "googleapis";
 import {getAuth} from "./auth.js";
@@ -49,6 +49,14 @@ function actionName(rule) {
   return "LABEL";
 }
 
+function intersection(a, b) {
+  return new Set([...a].filter((id) => b.has(id)));
+}
+
+function difference(a, b) {
+  return new Set([...a].filter((id) => !b.has(id)));
+}
+
 function chunks(items, size) {
   const out = [];
   for (let i = 0; i < items.length; i += size) out.push(items.slice(i, i + size));
@@ -79,9 +87,9 @@ const labels = await ensureLabels();
 const plans = [];
 const uniqueTrash = new Set();
 const uniqueArchive = new Set();
-const uniqueLabel = new Set();
+const uniqueAction = new Set();
 
-console.log("V4.3 HISTORICAL CLEANUP " + (execute ? "APPLY" : "PLAN"));
+console.log("V4.3.1 HISTORICAL CLEANUP " + (execute ? "APPLY" : "PLAN"));
 console.log("Scope: all matching mail except existing Trash/Spam.\n");
 
 for (const rule of rules) {
@@ -89,19 +97,33 @@ for (const rule of rules) {
   const ids = await listIds(query);
   const action = actionName(rule);
   plans.push({rule, ids, action});
-  const target = rule.trash ? uniqueTrash : rule.archive ? uniqueArchive : uniqueLabel;
+  const target = rule.trash ? uniqueTrash : rule.archive ? uniqueArchive : uniqueAction;
   for (const id of ids) target.add(id);
   console.log(action.padEnd(7) + " " + String(ids.length).padStart(6) + "  " +
     rule.name + (rule.label ? " -> " + rule.label : ""));
 }
 
-console.log("\nUnique-message summary (rules may overlap):");
-console.log("Would trash:   " + uniqueTrash.size);
-console.log("Would archive: " + uniqueArchive.size);
-console.log("Would label:   " + uniqueLabel.size);
+const trashAction = intersection(uniqueTrash, uniqueAction);
+const trashArchive = intersection(uniqueTrash, uniqueArchive);
+const actionArchive = intersection(uniqueAction, uniqueArchive);
+const safeTrash = difference(uniqueTrash, uniqueAction);
+const safeArchive = difference(uniqueArchive, uniqueAction);
+
+console.log("\nSAFETY / COLLISION ANALYSIS");
+console.log("TRASH vs ACTION:   " + trashAction.size);
+console.log("TRASH vs ARCHIVE:  " + trashArchive.size);
+console.log("ACTION vs ARCHIVE: " + actionArchive.size);
+console.log("Protected by Action rules: " + uniqueAction.size);
+console.log("Safe-to-trash unique:       " + safeTrash.size);
+console.log("Safe-to-archive unique:     " + safeArchive.size);
+if (trashAction.size) {
+  console.log("HIGH-RISK: " + trashAction.size +
+    " message(s) match Trash and Action; execution protects them from Trash.");
+}
 
 if (!execute) {
   console.log("\nNO MESSAGES CHANGED.");
+  console.log("Execution enforces Action precedence over Trash/Archive.");
   console.log("Review this output before execution.");
   console.log("To execute exactly this policy: npm run history:apply -- --yes");
   process.exit();
@@ -109,7 +131,10 @@ if (!execute) {
 
 console.log("\nApplying historical policy...");
 let operations = 0;
-for (const {rule, ids} of plans) {
+for (const {rule, ids: matchedIds} of plans) {
+  let ids = matchedIds;
+  if (rule.trash) ids = ids.filter((id) => safeTrash.has(id));
+  else if (rule.archive) ids = ids.filter((id) => safeArchive.has(id));
   if (!ids.length) continue;
   await applyRule(rule, ids, labels);
   console.log("APPLIED " + actionName(rule).padEnd(7) + " " +
@@ -118,4 +143,4 @@ for (const {rule, ids} of plans) {
 }
 console.log("\nHistorical cleanup complete.");
 console.log("Rule/message operations applied: " + operations);
-console.log("Trash actions only moved messages to Gmail Trash; nothing was permanently deleted.");
+console.log("Action-matched messages were protected from Trash and Archive.");\nconsole.log("Trash actions only moved messages to Gmail Trash; nothing was permanently deleted.");
