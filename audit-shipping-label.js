@@ -5,7 +5,7 @@
  * This script NEVER modifies Gmail.
  */
 import { google } from "googleapis";
-import { authorize } from "./auth.js";
+import { getAuth } from "./auth.js";
 import { rules } from "./rules.js";
 
 const LABEL = "Purchases/Shipping";
@@ -46,7 +46,7 @@ async function metadata(gmail, ids) {
   return out;
 }
 
-const auth = await authorize();
+const auth = await getAuth();
 const gmail = google.gmail({ version: "v1", auth });
 
 const shippingRules = rules.filter(r => r.label === LABEL && r.archive);
