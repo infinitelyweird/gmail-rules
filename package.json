@@ -1,6 +1,6 @@
 {
   "name": "gmail-rules-installer",
-  "version": "4.6.0",
+  "version": "4.7.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -14,7 +14,8 @@
     "history:plan": "node historical-cleanup.js",
     "history:apply": "node historical-cleanup.js --apply",
     "migrate:legal": "node gmail-organizer.js --migrate-legal",
-    "migrate:backup": "node gmail-organizer.js --migrate-backup"
+    "migrate:backup": "node gmail-organizer.js --migrate-backup",
+    "migrate:shipping": "node gmail-organizer.js --migrate-shipping"
   },
   "dependencies": {
     "@google-cloud/local-auth": "^3.0.1",
