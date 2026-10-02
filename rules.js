@@ -1,7 +1,7 @@
 /**
  * Declarative Gmail filtering policy.
  *
- * V4.7 is evidence-driven from the 10,000-message / 24-month inventory.
+ * V4.8 is evidence-driven from the 10,000-message / 24-month inventory.
  *
  * Fields:
  *   name       Human-readable name shown by --plan.
@@ -349,4 +349,102 @@ export const rules = [
     query: "from:support@redline360.com",
     trash: true,
   },
+  // Phase 4: another evidence-reviewed batch from sender-inventory.json.
+  // These addresses were consistently bulk/newsletter traffic in the samples.
+  {
+    name: "Promo — Threadloom forum digest",
+    query: "from:digest@vesta.threadloom.news",
+    trash: true,
+  },
+  {
+    name: "Promo — Lorraine Lea marketing",
+    query: "from:noreply@lorrainelea.com",
+    trash: true,
+  },
+  {
+    name: "Promo — DENALI Electronics marketing",
+    query: "from:info@denalielectronics.com",
+    trash: true,
+  },
+  {
+    name: "Promo — CORSAIR marketing",
+    query: "from:corsair@updates.corsair.com",
+    trash: true,
+  },
+  {
+    name: "Promo — STLFLIX newsletter",
+    query: "from:info@stlflix.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Motorcycle.com newsletter",
+    query: "from:newsletter@em.motorcycle.com",
+    trash: true,
+  },
+  {
+    name: "Promo — ResetSmile marketing",
+    query: "from:support@resetsmile.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Cove Smart offers",
+    query: "from:offers@covesmart.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Nood marketing",
+    query: "from:hello@trynood.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Calm newsletter",
+    query: "from:hello@breathe.calm.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Shari's Berries marketing",
+    query: "from:berries@em.berries.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Ollama updates",
+    query: "from:hello@ollama.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Netflix recommendations",
+    query: "from:info@members.netflix.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Facer newsletter",
+    query: "from:hello@facer.io",
+    trash: true,
+  },
+  {
+    name: "Promo — Ticketmaster Center Stage",
+    query: "from:centerstage@engage.ticketmaster.com",
+    trash: true,
+  },
+  {
+    name: "Promo — FRAME marketing",
+    query: "from:marketing@e.frame-store.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Living Simply newsletter",
+    query: "from:hello@livingsimply.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Instagram notifications",
+    query: "from:no-reply@mail.instagram.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Macorner marketing",
+    query: "from:no-reply@macorner.co",
+    trash: true,
+  },
+
 ];
