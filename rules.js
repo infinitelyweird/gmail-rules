@@ -1,7 +1,7 @@
 /**
  * Declarative Gmail filtering policy.
  *
- * V4.15.1 is evidence-driven from the 10,000-message / 24-month inventory.
+ * V4.16.0 is evidence-driven from the 10,000-message / 24-month inventory.
  *
  * Fields:
  *   name       Human-readable name shown by --plan.
@@ -816,5 +816,30 @@ export const rules = [
   { name: "Promo — Thermo-Calc courses", query: "from:courses@thermocalc.com", trash: true },
   { name: "Promo — Riser CardoRide newsletter", query: "from:cardoride_newsletter@news.riserapp.com", trash: true },
   { name: "Promo — Knix marketing", query: "from:info@knix.com", trash: true },
+
+  // Phase 11: final high-confidence single-message / residual promo tail.
+  { name: "Promo — Petco marketing", query: 'from:petco@e.petco.com -subject:("privacy policy" OR "terms of service" OR "terms and conditions")', trash: true },
+  { name: "Promo — CloudNine Clothing", query: "from:hello@cloudnineclothing.ca", trash: true },
+  { name: "Promo — Thermo-Calc marketing webinars", query: "from:marketing@thermocalc.com", trash: true },
+  { name: "Promo — Taurus marketing", query: "from:contact@taurususa.com", trash: true },
+  { name: "Promo — Subimods points expiration", query: "from:rewards@customer-mail.smile.io", trash: true },
+  { name: "Promo — SUNLU sales", query: "from:sales02@sunlu.com", trash: true },
+  { name: "Promo — Target Circle birthday marketing", query: "from:targetcircle@oe.target.com", trash: true },
+  { name: "Promo — Buffalo Wild Wings birthday marketing", query: "from:reply@emailinfo.buffalowildwings.com", trash: true },
+  { name: "Promo — Allstate birthday marketing", query: "from:allstate@allstate-emarketing.com", trash: true },
+  { name: "Promo — NASIOC birthday greeting", query: "from:forums@nasioc.com", trash: true },
+  { name: "Promo — Kinetic survey sweepstakes", query: "from:kinetic@express.medallia.com", trash: true },
+  { name: "Promo — DeviantArt birthday greeting", query: "from:noreply@deviantart.com", trash: true },
+  { name: "Promo — Aspen Ridge Homes newsletter", query: "from:info@aspenridgehomes.com", trash: true },
+  { name: "Promo — AmeriSave rate marketing", query: "from:amerisave@e.amerisave.com", trash: true },
+  { name: "Promo — CBS Sports promotion", query: "from:contact@email.cbssports.com", trash: true },
+  { name: "Promo — Fehmarnbelt newsletter", query: "from:deutschland@femern.dk", trash: true },
+  { name: "Promo — TeamViewer newsletter", query: "from:newsletter@mails.teamviewer.com", trash: true },
+  { name: "Promo — Pulsetto coupon marketing", query: "from:info@pulsetto.tech", trash: true },
+  { name: "Promo — ST2 Systems motorcycle sale", query: "from:david.rand@st2-systems.com", trash: true },
+  { name: "Promo — Fandango brand marketing", query: "from:fandango@movies.fandango.com", trash: true },
+  { name: "Promo — Konny Baby marketing", query: "from:hello@konnybaby.com", trash: true },
+  { name: "Promo — Only In Your State newsletter", query: "from:newsletter@onlyinyourstate.com", trash: true },
+  { name: "Promo — Mailchimp home-services marketing", query: "from:fbarlow76@236937482.mailchimpapp.com", trash: true },
 
 ];
