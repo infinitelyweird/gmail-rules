@@ -196,7 +196,7 @@ function auditLegacyFilters(filters) {
 }
 
 console.log(
-  "V4.1 " + mode.slice(2).toUpperCase() + " — " +
+  "V4.2 " + mode.slice(2).toUpperCase() + " — " +
     state.filters.length + " existing filters\n",
 );
 
