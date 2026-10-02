@@ -1,5 +1,5 @@
 /**
- * Historical mailbox policy engine — V4.7.0
+ * Historical mailbox policy engine — V4.8.0
  *
  * Safe by default: `npm run history:plan` counts matches and changes nothing.
  * Execution requires BOTH --apply and --yes.
@@ -123,7 +123,7 @@ const uniqueTrash = new Set();
 const uniqueArchive = new Set();
 const uniqueAction = new Set();
 
-console.log("V4.7.0 HISTORICAL CLEANUP " + (execute ? "APPLY" : "PLAN"));
+console.log("V4.8.0 HISTORICAL CLEANUP " + (execute ? "APPLY" : "PLAN"));
 console.log("Scope: all matching mail except existing Trash/Spam.\n");
 
 for (const rule of rules) {
@@ -212,7 +212,14 @@ if (trashAction.size) {
 
 if (!execute) {
   const pendingOperations = plans.reduce((sum, plan) => sum + plan.needs.length, 0);
+  const effectivePendingOperations = plans.reduce((sum, plan) => {
+    let ids = plan.needs;
+    if (plan.rule.trash) ids = ids.filter((id) => safeTrash.has(id));
+    else if (plan.rule.archive) ids = ids.filter((id) => safeArchive.has(id));
+    return sum + ids.length;
+  }, 0);
   console.log("\nPending rule/message operations before precedence: " + pendingOperations);
+  console.log("Effective pending operations after precedence: " + effectivePendingOperations);
   console.log("NO MESSAGES CHANGED.");
   console.log("Execution enforces Action precedence over Trash/Archive.");
   console.log("Review this output before execution.");
