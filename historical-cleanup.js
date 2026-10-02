@@ -1,5 +1,5 @@
 /**
- * Historical mailbox policy engine — V4.14.0
+ * Historical mailbox policy engine — V4.14.1
  *
  * Safe by default: `npm run history:plan` counts matches and changes nothing.
  * Execution requires BOTH --apply and --yes.
@@ -123,7 +123,7 @@ const uniqueTrash = new Set();
 const uniqueArchive = new Set();
 const uniqueAction = new Set();
 
-console.log("V4.14.0 HISTORICAL CLEANUP " + (execute ? "APPLY" : "PLAN"));
+console.log("V4.14.1 HISTORICAL CLEANUP " + (execute ? "APPLY" : "PLAN"));
 console.log("Scope: all matching mail except existing Trash/Spam.\n");
 
 for (const rule of rules) {
