@@ -13,6 +13,29 @@ const LABEL = "Purchases/Shipping";
 const PAGE_SIZE = 500;
 const execute = process.argv.includes("--apply") && process.argv.includes("--yes");
 
+const fossilCandidateQueries = [
+  ["Nutrisystem marketing", 'from:Nutrisystem@news.nutrisystem.com'],
+  ["SodaStream marketing", 'from:SodaStream@shop.sodastream.com'],
+  ["Edible Arrangements marketing", 'from:sweetdeals@p.ediblearrangements.com'],
+  ["Pizza Hut marketing", 'from:Promotions@my.pizzahut.com'],
+  ["Clothing Arts marketing", 'from:info@clothingarts.com'],
+  ["ISEE Hair marketing", 'from:jessie@iseehair.com'],
+  ["Uber Eats marketing", 'from:uber@uber.com'],
+  ["Touch of Modern marketing", 'from:hello@email.touchofmodern.com'],
+  ["Touch of Modern marketing secondary", 'from:hello@p.touchofmodern.com'],
+  ["Angies List Big Deal marketing", 'from:thebigdeal@thebigdeal.angieslist.com'],
+  ["PrettyLitter marketing", 'from:prettylitter@mail.prettylitter.com'],
+  ["PrettyLitter marketing secondary", 'from:prettylitter@e.prettylittercats.com'],
+  ["SHEIN marketing", 'from:shein@news.edmmarket.shein.com'],
+  ["StackSocial deals", 'from:deals@mail.stackcommerce.com'],
+  ["Krispy Kreme marketing", 'from:krispykreme@e.krispykreme.com'],
+  ["Little Caesars marketing", 'from:littlecaesars@littlecaesars.fbmta.com'],
+  ["Nalley Honda marketing", 'from:NalleyHonda@s1.eautodealerhub.com'],
+  ["SodaStream US marketing typo-domain", 'from:SodaStreamUSA@sodasteam.com'],
+  ["SodaStream US marketing", 'from:SodaStreamUSA@sodastream.com'],
+  ["Boston Globe newsletter", 'from:newsletters@email.bostonglobe.com'],
+];
+
 async function allIds(gmail, query) {
   const ids = [];
   let pageToken;
