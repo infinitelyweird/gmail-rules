@@ -1,7 +1,7 @@
 /**
  * Declarative Gmail filtering policy.
  *
- * V4.16.0 is evidence-driven from the 10,000-message / 24-month inventory.
+ * V4.16.1 is evidence-driven from the 10,000-message / 24-month inventory.
  *
  * Fields:
  *   name       Human-readable name shown by --plan.
@@ -818,7 +818,7 @@ export const rules = [
   { name: "Promo — Knix marketing", query: "from:info@knix.com", trash: true },
 
   // Phase 11: final high-confidence single-message / residual promo tail.
-  { name: "Promo — Petco marketing", query: 'from:petco@e.petco.com -subject:("privacy policy" OR "terms of service" OR "terms and conditions")', trash: true },
+  { name: "Promo — Petco marketing", query: 'from:petco@e.petco.com -subject:("privacy policy" OR "terms of service" OR "terms and conditions" OR password OR "password reset" OR security OR "security alert" OR "verification code" OR "one-time code" OR "check-up" OR checkup OR appointment OR vaccine OR vaccination OR prescription OR refill OR vet OR veterinary OR overdue)', trash: true },
   { name: "Promo — CloudNine Clothing", query: "from:hello@cloudnineclothing.ca", trash: true },
   { name: "Promo — Thermo-Calc marketing webinars", query: "from:marketing@thermocalc.com", trash: true },
   { name: "Promo — Taurus marketing", query: "from:contact@taurususa.com", trash: true },
