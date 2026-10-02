@@ -85,3 +85,60 @@ if (unexplained.length) {
     if (items.length > 8) console.log(`  ... ${items.length - 8} more`);
   }
 }
+
+
+/*
+ * V4.18 fossil analysis
+ *
+ * A "fossil" is a message that still carries Purchases/Shipping but is not
+ * explained by any current shipping rule.  This section is deliberately
+ * READ ONLY.  It does not remove labels, archive, trash, or restore Inbox.
+ *
+ * The first cleanup candidates are intentionally conservative: sender/query
+ * combinations whose audit subjects are clearly promotional/newsletter
+ * language rather than records of an actual shipment.
+ */
+const fossilCandidateQueries = [
+  ["Nutrisystem marketing", 'from:Nutrisystem@news.nutrisystem.com'],
+  ["SodaStream marketing", 'from:SodaStream@shop.sodastream.com'],
+  ["Edible Arrangements marketing", 'from:sweetdeals@p.ediblearrangements.com'],
+  ["Pizza Hut marketing", 'from:Promotions@my.pizzahut.com'],
+  ["Clothing Arts marketing", 'from:info@clothingarts.com'],
+  ["ISEE Hair marketing", 'from:jessie@iseehair.com'],
+  ["Uber Eats marketing", 'from:uber@uber.com'],
+  ["Touch of Modern marketing", 'from:hello@email.touchofmodern.com'],
+  ["Touch of Modern marketing secondary", 'from:hello@p.touchofmodern.com'],
+  ["Angies List Big Deal marketing", 'from:thebigdeal@thebigdeal.angieslist.com'],
+  ["PrettyLitter marketing", 'from:prettylitter@mail.prettylitter.com'],
+  ["PrettyLitter marketing secondary", 'from:prettylitter@e.prettylittercats.com'],
+  ["SHEIN marketing", 'from:shein@news.edmmarket.shein.com'],
+  ["StackSocial deals", 'from:deals@mail.stackcommerce.com'],
+  ["Krispy Kreme marketing", 'from:krispykreme@e.krispykreme.com'],
+  ["Little Caesars marketing", 'from:littlecaesars@littlecaesars.fbmta.com'],
+  ["Nalley Honda marketing", 'from:NalleyHonda@s1.eautodealerhub.com'],
+  ["SodaStream US marketing typo-domain", 'from:SodaStreamUSA@sodasteam.com'],
+  ["SodaStream US marketing", 'from:SodaStreamUSA@sodastream.com'],
+  ["Boston Globe newsletter", 'from:newsletters@email.bostonglobe.com'],
+];
+
+if (unexplained.length) {
+  const unexplainedSet = new Set(unexplained);
+  const candidates = new Map();
+
+  for (const [name, query] of fossilCandidateQueries) {
+    const ids = await allIds(gmail, `(${query}) label:"${LABEL}" -in:trash -in:spam`);
+    const fossilIds = ids.filter(id => unexplainedSet.has(id));
+    if (fossilIds.length) {
+      candidates.set(name, fossilIds);
+      console.log(`FOSSIL CANDIDATE ${String(fossilIds.length).padStart(4)}  ${name}`);
+    }
+  }
+
+  const uniqueCandidates = new Set([...candidates.values()].flat());
+  console.log("\nFOSSIL CLEANUP PREVIEW — READ ONLY");
+  console.log(`Unexplained labeled messages: ${unexplained.length}`);
+  console.log(`High-confidence label-removal candidates: ${uniqueCandidates.size}`);
+  console.log(`Unexplained messages left untouched: ${unexplained.length - uniqueCandidates.size}`);
+  console.log("PROPOSED ACTION: remove Purchases/Shipping label only.");
+  console.log("NO MESSAGES CHANGED.");
+}
