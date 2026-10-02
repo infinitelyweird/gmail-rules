@@ -1,5 +1,5 @@
 /**
- * Gmail Rules Installer V4.5.0
+ * Gmail Rules Installer V4.7.0
  *
  * Adds:
  * - Idempotent exact-filter detection.
@@ -13,7 +13,7 @@ import {google} from "googleapis";
 import {getAuth} from "./auth.js";
 import {rules} from "./rules.js";
 
-const MODES = ["--plan", "--backup", "--apply", "--restore", "--cleanup-legacy", "--migrate-legal", "--migrate-backup"];
+const MODES = ["--plan", "--backup", "--apply", "--restore", "--cleanup-legacy", "--migrate-legal", "--migrate-backup", "--migrate-shipping"];
 const mode = process.argv.find((arg) => MODES.includes(arg)) || "--plan";
 const BACKUP = "gmail-filter-backup-v4.json";
 
@@ -46,6 +46,8 @@ const OLD_LEGAL_QUERIES = new Set([
 ]);
 const OLD_BACKUP_QUERY =
   'subject:("backup status report" OR "backup completed" OR "successful backup")';
+const OLD_SHIPPING_EXCEPTION_QUERY =
+  'subject:("delivery exception" OR delayed OR "delivery problem" OR "package missing" OR "could not deliver")';
 
 const gmail = google.gmail({version: "v1", auth: await getAuth()});
 
@@ -202,6 +204,41 @@ if (mode === "--migrate-backup") {
   process.exit();
 }
 
+if (mode === "--migrate-shipping") {
+  const state = await snapshot();
+  const shippingLabel = state.labels.find((label) => label.name === "Action/Delivery Problems");
+  if (!shippingLabel) throw new Error("Action/Delivery Problems label not found.");
+
+  const matches = state.filters.filter((filter) => {
+    const n = normalizeFilter(filter);
+    return n.criteria.query === OLD_SHIPPING_EXCEPTION_QUERY &&
+      n.action.addLabelIds.length === 2 &&
+      n.action.addLabelIds.includes(shippingLabel.id) &&
+      n.action.addLabelIds.includes("IMPORTANT") &&
+      n.action.removeLabelIds.length === 0 &&
+      !n.action.forward;
+  });
+
+  console.log("V4.7.0 SHIPPING FILTER MIGRATION — " + matches.length +
+    " obsolete exact filter(s) found.");
+  for (const filter of matches) {
+    console.log("WOULD DELETE " + filter.id + " | query=" +
+      (filter.criteria?.query || "(none)"));
+  }
+  if (!process.argv.includes("--yes")) {
+    console.log("Preview only. Add --yes to delete exactly the obsolete broad shipping-exception filter.");
+    process.exit();
+  }
+  if (matches.length !== 1) {
+    throw new Error("Expected exactly 1 obsolete shipping-exception filter; refusing migration.");
+  }
+  await backup();
+  await gmail.users.settings.filters.delete({userId: "me", id: matches[0].id});
+  console.log("DELETED obsolete broad shipping-exception filter " + matches[0].id);
+  console.log("Now run npm run apply to install the narrowed replacement.");
+  process.exit();
+}
+
 if (mode === "--restore") {
   const backedUp = JSON.parse(await fs.readFile(BACKUP, "utf8"));
   const current =
@@ -277,7 +314,7 @@ function auditLegacyFilters(filters) {
 }
 
 console.log(
-  "V4.5.0 " + mode.slice(2).toUpperCase() + " — " +
+  "V4.7.0 " + mode.slice(2).toUpperCase() + " — " +
     state.filters.length + " existing filters\n",
 );
 
