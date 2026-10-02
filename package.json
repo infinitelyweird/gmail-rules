@@ -16,7 +16,8 @@
     "migrate:legal": "node gmail-organizer.js --migrate-legal",
     "migrate:backup": "node gmail-organizer.js --migrate-backup",
     "migrate:shipping": "node gmail-organizer.js --migrate-shipping",
-    "migrate:shipping-routine": "node gmail-organizer.js --migrate-shipping-routine"
+    "migrate:shipping-routine": "node gmail-organizer.js --migrate-shipping-routine",
+    "audit:shipping-label": "node audit-shipping-label.js"
   },
   "dependencies": {
     "@google-cloud/local-auth": "^3.0.1",
