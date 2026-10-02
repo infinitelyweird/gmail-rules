@@ -1,7 +1,7 @@
 /**
  * Declarative Gmail filtering policy.
  *
- * V4.13.0 is evidence-driven from the 10,000-message / 24-month inventory.
+ * V4.13.1 is evidence-driven from the 10,000-message / 24-month inventory.
  *
  * Fields:
  *   name       Human-readable name shown by --plan.
@@ -748,7 +748,7 @@ export const rules = [
   { name: "Promo — Frontier deals", query: "from:deals@mkt.flyfrontier.com", trash: true },
   { name: "Promo — Holgates marketing", query: "from:marketing@holgates.co.uk", trash: true },
   { name: "Promo — Georgia Renaissance Festival", query: "from:info@garenfest.com", trash: true },
-  { name: "Promo — Throttle Tiger marketing", query: "from:support@throttletiger.com", trash: true },
+  { name: "Promo — Throttle Tiger marketing", query: 'from:support@throttletiger.com -subject:("has shipped" OR "have shipped" OR "was shipped" OR "shipping confirmation" OR "shipment update" OR "out for delivery" OR "has been delivered" OR "was delivered" OR "package delivered" OR "order delivered" OR "tracking number")', trash: true },
   { name: "Promo — MAGFAST marketing", query: "from:hello@magfast.com", trash: true },
   { name: "Promo — Steve Madden Mexico marketing", query: "from:info@send.stevemadden.com.mx", trash: true },
   { name: "Promo — Winn-Dixie offers", query: "from:reply@mail.winndixie.com", trash: true },
