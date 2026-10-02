@@ -40,7 +40,10 @@ const LEGACY_CLEANUP_IDS = new Set([
 
 // V4.3.3 migration: replace only the obsolete broad legal rule. We identify it
 // by exact criteria/action semantics rather than deleting a merely similar rule.
-const OLD_LEGAL_QUERY = 'subject:("dispute" OR "legal notice" OR settlement OR claim) -subject:(newsletter OR offer OR sale)';
+const OLD_LEGAL_QUERIES = new Set([
+  'subject:(dispute OR "legal notice" OR settlement OR claim) -subject:(newsletter OR offer OR sale)',
+  'subject:("dispute" OR "legal notice" OR settlement OR claim) -subject:(newsletter OR offer OR sale)',
+]);
 const gmail = google.gmail({version: "v1", auth: await getAuth()});
 
 function normalizeFilter(filter) {
@@ -130,14 +133,23 @@ if (mode === "--migrate-legal") {
   const legalLabel = state.labels.find((label) => label.name === "Action/Legal & Disputes");
   if (!legalLabel) throw new Error("Action/Legal & Disputes label not found.");
 
-  const oldDesired = {
-    criteria: {query: OLD_LEGAL_QUERY},
-    action: {addLabelIds: [legalLabel.id, "IMPORTANT"].sort(), removeLabelIds: []},
-  };
-  const matches = state.filters.filter((filter) => sameFilter(filter, oldDesired));
+  // Match the obsolete filter structurally. Gmail may normalize harmless query
+  // quoting, so accept the two known serialized forms while still requiring
+  // the exact Action label + IMPORTANT action and no other behavior.
+  const matches = state.filters.filter((filter) => {
+    const n = normalizeFilter(filter);
+    return OLD_LEGAL_QUERIES.has(n.criteria.query) &&
+      n.action.addLabelIds.length === 2 &&
+      n.action.addLabelIds.includes(legalLabel.id) &&
+      n.action.addLabelIds.includes("IMPORTANT") &&
+      n.action.removeLabelIds.length === 0 &&
+      !n.action.forward;
+  });
 
   console.log("V4.3.3 LEGAL FILTER MIGRATION — " + matches.length + " obsolete exact filter(s) found.");
-  for (const filter of matches) console.log("WOULD DELETE " + filter.id);
+  for (const filter of matches) {
+    console.log("WOULD DELETE " + filter.id + " | query=" + (filter.criteria?.query || "(none)"));
+  }
   if (!process.argv.includes("--yes")) {
     console.log("Preview only. Add --yes to delete exactly the obsolete broad legal filter.");
     process.exit();
