@@ -1,7 +1,7 @@
 /**
  * Declarative Gmail filtering policy.
  *
- * V4.12.0 is evidence-driven from the 10,000-message / 24-month inventory.
+ * V4.12.1 is evidence-driven from the 10,000-message / 24-month inventory.
  *
  * Fields:
  *   name       Human-readable name shown by --plan.
@@ -606,7 +606,7 @@ export const rules = [
   },
   {
     name: "Promo — iHeart newsletter",
-    query: "from:newsletters@e.iheart.com",
+    query: 'from:newsletters@e.iheart.com -subject:(dispute OR "legal notice" OR settlement OR "legal claim" OR "insurance claim" OR "claim number" OR "claim status" OR "claim filed")',
     trash: true,
   },
   {
@@ -616,7 +616,7 @@ export const rules = [
   },
   {
     name: "Promo — SociableKIT marketing",
-    query: "from:support@sociablekit.com",
+    query: 'from:support@sociablekit.com -subject:(security OR "security alert" OR "new sign-in" OR "new login" OR "login attempt" OR "verification code" OR "one-time code" OR password OR "account locked" OR "suspicious activity")',
     trash: true,
   },
   {
