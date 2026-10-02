@@ -13,7 +13,7 @@ import {google} from "googleapis";
 import {getAuth} from "./auth.js";
 import {rules} from "./rules.js";
 
-const MODES = ["--plan", "--backup", "--apply", "--restore", "--cleanup-legacy"];
+const MODES = ["--plan", "--backup", "--apply", "--restore", "--cleanup-legacy", "--migrate-legal"];
 const mode = process.argv.find((arg) => MODES.includes(arg)) || "--plan";
 const BACKUP = "gmail-filter-backup-v4.json";
 
@@ -37,6 +37,10 @@ const LEGACY_CLEANUP_IDS = new Set([
   "ANe1BmivT7g3Jtp7_dpjI6h4YQUrob_su5gm_kZkdzlXG2MDw5KgXzipj1UyBgZoxtX5I6qc0w", // Guest Reservations: mark read
   "ANe1BmgeBwz9RpyXWBt1GCHysFvOFtXQ5c5xNANtFGb6lUOESPNrJoRTyFq1bezIfh0QzbxZiw", // Jackbox: mark read + star
 ]);
+
+// V4.3.3 migration: replace only the obsolete broad legal rule. We identify it
+// by exact criteria/action semantics rather than deleting a merely similar rule.
+const OLD_LEGAL_QUERY = 'subject:("dispute" OR "legal notice" OR settlement OR claim) -subject:(newsletter OR offer OR sale)';
 const gmail = google.gmail({version: "v1", auth: await getAuth()});
 
 function normalizeFilter(filter) {
@@ -121,6 +125,33 @@ if (mode === "--cleanup-legacy") {
   process.exit();
 }
 
+if (mode === "--migrate-legal") {
+  const state = await snapshot();
+  const legalLabel = state.labels.find((label) => label.name === "Action/Legal & Disputes");
+  if (!legalLabel) throw new Error("Action/Legal & Disputes label not found.");
+
+  const oldDesired = {
+    criteria: {query: OLD_LEGAL_QUERY},
+    action: {addLabelIds: [legalLabel.id, "IMPORTANT"].sort(), removeLabelIds: []},
+  };
+  const matches = state.filters.filter((filter) => sameFilter(filter, oldDesired));
+
+  console.log("V4.3.3 LEGAL FILTER MIGRATION — " + matches.length + " obsolete exact filter(s) found.");
+  for (const filter of matches) console.log("WOULD DELETE " + filter.id);
+  if (!process.argv.includes("--yes")) {
+    console.log("Preview only. Add --yes to delete exactly the obsolete broad legal filter.");
+    process.exit();
+  }
+  if (matches.length !== 1) {
+    throw new Error("Expected exactly 1 obsolete legal filter; refusing migration.");
+  }
+  await backup();
+  await gmail.users.settings.filters.delete({userId: "me", id: matches[0].id});
+  console.log("DELETED obsolete legal filter " + matches[0].id);
+  console.log("Now run npm run apply to install the narrowed replacement.");
+  process.exit();
+}
+
 if (mode === "--restore") {
   const backedUp = JSON.parse(await fs.readFile(BACKUP, "utf8"));
   const current =
@@ -196,7 +227,7 @@ function auditLegacyFilters(filters) {
 }
 
 console.log(
-  "V4.2 " + mode.slice(2).toUpperCase() + " — " +
+  "V4.3.3 " + mode.slice(2).toUpperCase() + " — " +
     state.filters.length + " existing filters\n",
 );
 
