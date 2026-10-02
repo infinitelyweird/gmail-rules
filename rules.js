@@ -1,7 +1,7 @@
 /**
  * Declarative Gmail filtering policy.
  *
- * V4.5 is evidence-driven from the 10,000-message / 24-month inventory.
+ * V4.7 is evidence-driven from the 10,000-message / 24-month inventory.
  *
  * Fields:
  *   name       Human-readable name shown by --plan.
@@ -49,7 +49,7 @@ export const rules = [
   {
     name: "Shipping exceptions",
     label: "Action/Delivery Problems",
-    query: 'subject:("delivery exception" OR delayed OR "delivery problem" OR "package missing" OR "could not deliver")',
+    query: 'subject:("delivery exception" OR "delivery delayed" OR "shipment delayed" OR "package delayed" OR "delivery problem" OR "package missing" OR "could not deliver")',
     archive: false,
     important: true,
   },
