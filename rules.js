@@ -36,7 +36,7 @@ export const rules = [
   {
     name: "Disputes/legal action",
     label: "Action/Legal & Disputes",
-    query: 'subject:(dispute OR "legal notice" OR settlement OR claim) -subject:(newsletter OR offer OR sale)',
+    query: 'subject:(dispute OR "legal notice" OR settlement OR "legal claim" OR "insurance claim" OR "claim number" OR "claim status" OR "claim filed") -subject:(newsletter OR offer OR sale)',
     archive: false,
     important: true,
   },
