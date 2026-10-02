@@ -1,5 +1,5 @@
 /**
- * Historical mailbox policy engine — V4.3.2
+ * Historical mailbox policy engine — V4.4.0
  *
  * Safe by default: `npm run history:plan` counts matches and changes nothing.
  * Execution requires BOTH --apply and --yes.
@@ -30,17 +30,44 @@ async function ensureLabels() {
   return labels;
 }
 
-async function listIds(query) {
-  const ids = [];
+async function listMessages(query) {
+  const messages = [];
   let pageToken;
   do {
     const response = await gmail.users.messages.list({
       userId: "me", q: query, maxResults: 500, pageToken,
     });
-    ids.push(...(response.data.messages || []).map((m) => m.id));
+    messages.push(...(response.data.messages || []));
     pageToken = response.data.nextPageToken;
   } while (pageToken);
-  return ids;
+  return messages;
+}
+
+async function getLabelIds(id) {
+  const response = await gmail.users.messages.get({
+    userId: "me",
+    id,
+    format: "minimal",
+  });
+  return new Set(response.data.labelIds || []);
+}
+
+async function idsNeedingRule(rule, ids, labels) {
+  const desiredLabelId = rule.label ? labels.get(rule.label) : undefined;
+  const needs = [];
+  // State checks are intentionally bounded in parallel to avoid hammering Gmail.
+  for (const batch of chunks(ids, 25)) {
+    const states = await Promise.all(batch.map(async (id) => [id, await getLabelIds(id)]));
+    for (const [id, labelIds] of states) {
+      let pending = false;
+      if (rule.trash) pending ||= !labelIds.has("TRASH");
+      if (rule.archive) pending ||= labelIds.has("INBOX");
+      if (rule.label && desiredLabelId) pending ||= !labelIds.has(desiredLabelId);
+      if (rule.important) pending ||= !labelIds.has("IMPORTANT");
+      if (pending) needs.push(id);
+    }
+  }
+  return needs;
 }
 
 function actionName(rule) {
@@ -89,18 +116,25 @@ const uniqueTrash = new Set();
 const uniqueArchive = new Set();
 const uniqueAction = new Set();
 
-console.log("V4.3.2 HISTORICAL CLEANUP " + (execute ? "APPLY" : "PLAN"));
+console.log("V4.4.0 HISTORICAL CLEANUP " + (execute ? "APPLY" : "PLAN"));
 console.log("Scope: all matching mail except existing Trash/Spam.\n");
 
 for (const rule of rules) {
   const query = "(" + rule.query + ") -in:trash -in:spam";
-  const ids = await listIds(query);
+  const messages = await listMessages(query);
+  const ids = messages.map((m) => m.id);
   const action = actionName(rule);
-  plans.push({rule, ids, action});
+  const needs = await idsNeedingRule(rule, ids, labels);
+  plans.push({rule, ids, needs, action});
   const target = rule.trash ? uniqueTrash : rule.archive ? uniqueArchive : uniqueAction;
   for (const id of ids) target.add(id);
-  console.log(action.padEnd(7) + " " + String(ids.length).padStart(6) + "  " +
-    rule.name + (rule.label ? " -> " + rule.label : ""));
+  console.log(
+    action.padEnd(7) +
+    " MATCHED " + String(ids.length).padStart(6) +
+    "  NEEDS " + String(needs.length).padStart(6) +
+    "  DONE " + String(ids.length - needs.length).padStart(6) +
+    "  " + rule.name + (rule.label ? " -> " + rule.label : "")
+  );
 }
 
 const trashAction = intersection(uniqueTrash, uniqueAction);
@@ -162,7 +196,9 @@ if (trashAction.size) {
 }
 
 if (!execute) {
-  console.log("\nNO MESSAGES CHANGED.");
+  const pendingOperations = plans.reduce((sum, plan) => sum + plan.needs.length, 0);
+  console.log("\nPending rule/message operations before precedence: " + pendingOperations);
+  console.log("NO MESSAGES CHANGED.");
   console.log("Execution enforces Action precedence over Trash/Archive.");
   console.log("Review this output before execution.");
   console.log("To execute exactly this policy: npm run history:apply -- --yes");
@@ -171,8 +207,8 @@ if (!execute) {
 
 console.log("\nApplying historical policy...");
 let operations = 0;
-for (const {rule, ids: matchedIds} of plans) {
-  let ids = matchedIds;
+for (const {rule, needs: pendingIds} of plans) {
+  let ids = pendingIds;
   if (rule.trash) ids = ids.filter((id) => safeTrash.has(id));
   else if (rule.archive) ids = ids.filter((id) => safeArchive.has(id));
   if (!ids.length) continue;
