@@ -43,7 +43,7 @@ export const rules = [
   {
     name: "Shipping routine",
     label: "Purchases/Shipping",
-    query: 'subject:("has shipped" OR "have shipped" OR "was shipped" OR "shipping confirmation" OR "shipment update" OR "out for delivery" OR "has been delivered" OR "was delivered" OR "package delivered" OR "order delivered" OR "tracking number") -subject:(exception OR delayed OR problem OR failed OR missing)',
+    query: 'subject:("has shipped" OR "have shipped" OR "was shipped" OR "order shipped" OR "order has been shipped" OR "order just shipped" OR "shipment notification" OR "shipment confirmation" OR "shipment status" OR "shipment is on the way" OR "shipment from order" OR "scheduled for delivery" OR "delivery scheduled" OR "out for delivery" OR "has been delivered" OR "was delivered" OR "package delivered" OR "order delivered" OR "order is being delivered" OR "items shipped" OR "tracking information" OR "tracking confirmation" OR "tracking status update") -subject:(exception OR delayed OR problem OR failed OR missing)',
     archive: true,
   },
   {
