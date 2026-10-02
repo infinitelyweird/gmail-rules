@@ -1,21 +1,22 @@
 /**
  * Declarative Gmail filtering policy.
  *
- * Keep WHAT Gmail should do here and HOW it is installed in
- * gmail-organizer.js. This makes future rule reviews much easier.
+ * V4.1 is evidence-driven from the 10,000-message / 24-month inventory.
  *
  * Fields:
- *   name      Human-readable name shown by --plan.
- *   label     Gmail label applied to matching messages.
- *   query     Gmail search syntax used as filter criteria.
- *   archive   true removes INBOX; false leaves the message visible.
- *   important true also adds Gmail's IMPORTANT system label.
+ *   name       Human-readable name shown by --plan.
+ *   label      Gmail label applied to matching messages. Optional for trash.
+ *   query      Gmail search/filter query.
+ *   archive    Remove INBOX.
+ *   important  Add IMPORTANT.
+ *   trash      Move matching future messages to Trash.
  *
- * Philosophy: Inbox is for attention. Routine records are labeled + archived;
- * exceptions and time-sensitive messages stay visible.
- *
- * Gmail filters are independent, so one message can match multiple rules.
- * Broad queries should therefore be treated carefully.
+ * SAFETY:
+ * - Blanket sender trash rules are used only for addresses whose inventory
+ *   samples were consistently promotional/newsletter traffic.
+ * - Transactional addresses from the same brands are intentionally separate.
+ * - Mixed financial, medical, security, legal and travel senders are not
+ *   blanket-trashed.
  */
 export const rules = [
   {
@@ -28,7 +29,7 @@ export const rules = [
   {
     name: "Bills requiring attention",
     label: "Action/Bills Due",
-    query: 'subject:("bill needs attention" OR "payment due" OR "upcoming payment due" OR "past due" OR overdue OR "payment failed" OR "payment declined")',
+    query: 'subject:("bill needs attention" OR "payment due" OR "upcoming payment due" OR "past due" OR overdue OR "payment failed" OR "payment declined" OR "payment was not successful")',
     archive: false,
     important: true,
   },
@@ -39,7 +40,6 @@ export const rules = [
     archive: false,
     important: true,
   },
-  // Normal shipping updates are records; exceptions remain visible below.
   {
     name: "Shipping routine",
     label: "Purchases/Shipping",
@@ -53,8 +53,6 @@ export const rules = [
     archive: false,
     important: true,
   },
-  // Successful payments archive; failed/overdue payments are excluded so the
-  // Bills requiring attention rule can keep them visible.
   {
     name: "Payment confirmations",
     label: "Finance/Payments",
@@ -76,7 +74,110 @@ export const rules = [
   {
     name: "Calendar agendas",
     label: "Low Priority/Automated Reports",
-    query: 'subject:("daily agenda" OR "you have no events scheduled today")',
+    query: 'from:calendar-notification@google.com subject:("daily agenda" OR "you have no events scheduled today")',
     archive: true,
+  },
+
+  // High-confidence promotional/newsletter addresses from the 10K inventory.
+  // These rules affect FUTURE mail only. Historical cleanup is a separate pass.
+  {
+    name: "Promo — Lowe's marketing",
+    query: "from:lowes@e.lowes.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Best Buy marketing",
+    query: "from:bestbuy@email.bestbuy.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Etsy marketing",
+    query: "from:email@email.etsy.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Bed Bath & Beyond marketing",
+    query: "from:email@promotion.bedbathandbeyond.com",
+    trash: true,
+  },
+  {
+    name: "Promo — RevZilla marketing",
+    query: "from:revzilla@email.revzilla.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Good Chop marketing",
+    query: "from:hello@g.goodchop.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Academy marketing",
+    query: "from:email@e.academy.com",
+    trash: true,
+  },
+  {
+    name: "Promo — NewsBreak newsletter",
+    query: "from:newsletter@newsbreakpost.com",
+    trash: true,
+  },
+  {
+    name: "Promo — 1-800-Flowers marketing",
+    query: "from:flowers@em.1800flowers.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Home Depot marketing",
+    query: "from:homedepotcustomercare@mg.homedepot.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Fandango at Home marketing",
+    query: "from:fandangoathome@movies.fandango.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Sleep Number marketing",
+    query: "from:sleepnumber@mailreply.sleepnumber.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Food Lion marketing",
+    query: "from:customerservice@reply.foodlionemail.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Advance Auto marketing",
+    query: "from:advanceauto@email-advanceautoparts.com",
+    trash: true,
+  },
+  {
+    name: "Promo — eBay marketing",
+    query: "from:ebay@reply.ebay.com",
+    trash: true,
+  },
+  {
+    name: "Promo — AutoZone marketing",
+    query: "from:autozone@em.autozone.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Govee newsletter",
+    query: "from:newsletter@govee.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Quest Diagnostics promotions",
+    query: "from:promo@e.questdiagnostics.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Reolink newsletter",
+    query: "from:newsletter@mail.reolinksupport.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Micro Center marketing",
+    query: "from:microcenter@email.microcenter.com",
+    trash: true,
   },
 ];
