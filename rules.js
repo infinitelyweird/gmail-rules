@@ -1,7 +1,7 @@
 /**
  * Declarative Gmail filtering policy.
  *
- * V4.1 is evidence-driven from the 10,000-message / 24-month inventory.
+ * V4.2 is evidence-driven from the 10,000-message / 24-month inventory.
  *
  * Fields:
  *   name       Human-readable name shown by --plan.
@@ -75,6 +75,117 @@ export const rules = [
     name: "Calendar agendas",
     label: "Low Priority/Automated Reports",
     query: 'from:calendar-notification@google.com subject:("daily agenda" OR "you have no events scheduled today")',
+    archive: true,
+  },
+
+  // Phase 2: mixed senders. These rules are deliberately sender + subject
+  // specific so routine traffic cannot suppress an exception from the same
+  // company. Gmail filters are independent, so routine rules explicitly
+  // exclude the exception vocabulary where needed.
+  {
+    name: "IDrive backup failures",
+    label: "Action/Backup Problems",
+    query: 'from:no-reply@backupstatus.idrive.com subject:(failed OR failure OR error OR unsuccessful OR incomplete)',
+    archive: false,
+    important: true,
+  },
+  {
+    name: "IDrive routine backup reports",
+    label: "Services/Backup Reports",
+    query: 'from:no-reply@backupstatus.idrive.com -subject:(failed OR failure OR error OR unsuccessful OR incomplete)',
+    archive: true,
+  },
+  {
+    name: "Progressive action required",
+    label: "Action/Bills Due",
+    query: 'from:customerservice@e.progressive.com subject:("payment due" OR "bill available" OR renewal OR "policy document" OR "payment failed" OR "payment declined")',
+    archive: false,
+    important: true,
+  },
+  {
+    name: "Progressive payment confirmations",
+    label: "Finance/Payments",
+    query: 'from:customerservice@e.progressive.com subject:("payment confirmation" OR "payment received" OR "payment posted")',
+    archive: true,
+  },
+  {
+    name: "Chase security and payment problems",
+    label: "Action/Security",
+    query: 'from:no.reply.alerts@chase.com subject:("new device" OR verification OR "payment failed" OR "payment declined" OR "was not successful")',
+    archive: false,
+    important: true,
+  },
+  {
+    name: "Chase routine statements and scheduled payments",
+    label: "Finance/Statements",
+    query: 'from:no.reply.alerts@chase.com subject:(statement OR "scheduled payment") -subject:(failed OR declined OR unsuccessful)',
+    archive: true,
+  },
+  {
+    name: "BrightWay action required",
+    label: "Action/Bills Due",
+    query: 'from:onemain_brightway@mail36.onemaincreditcards.com subject:(unsuccessful OR failed OR declined OR verification OR "action required")',
+    archive: false,
+    important: true,
+  },
+  {
+    name: "BrightWay routine statements and payments",
+    label: "Finance/Statements",
+    query: 'from:onemain_brightway@mail36.onemaincreditcards.com subject:(statement OR "payment posted" OR "payment received") -subject:(unsuccessful OR failed OR declined)',
+    archive: true,
+  },
+  {
+    name: "Experian security and credit alerts",
+    label: "Finance/Credit Alerts",
+    query: 'from:support@s.usa.experian.com subject:(alert OR freeze OR "new device" OR "sign-in" OR verification OR suspicious)',
+    archive: false,
+    important: true,
+  },
+  {
+    name: "TransUnion credit alerts",
+    label: "Finance/Credit Alerts",
+    query: 'from:hello@alerts.transunion.com subject:(alert OR change OR "new account" OR inquiry OR suspicious)',
+    archive: false,
+    important: true,
+  },
+  {
+    name: "WageWorks account action",
+    label: "Action/Account Problems",
+    query: 'from:servicenotice@wageworks.com',
+    archive: false,
+    important: true,
+  },
+  {
+    name: "InDebted account action",
+    label: "Action/Bills Due",
+    query: 'from:customersupport-us@indebted.co',
+    archive: false,
+    important: true,
+  },
+  {
+    name: "Five Lakes legal and debt action",
+    label: "Action/Legal & Disputes",
+    query: 'from:clientsuccess@fivelakeslawgroup.com',
+    archive: false,
+    important: true,
+  },
+  {
+    name: "Google One storage warnings",
+    label: "Action/Account Problems",
+    query: 'from:googleone-noreply@google.com subject:(storage OR full OR limit OR capacity)',
+    archive: false,
+    important: true,
+  },
+  {
+    name: "Amazon order updates",
+    label: "Purchases/Shipping",
+    query: 'from:order-update@amazon.com -subject:(problem OR failed OR cancelled OR canceled OR delayed OR missing)',
+    archive: true,
+  },
+  {
+    name: "Walmart order and delivery updates",
+    label: "Purchases/Shipping",
+    query: 'from:help@walmart.com subject:(order OR shipped OR delivered OR delivery OR pickup) -subject:(problem OR failed OR cancelled OR canceled OR delayed OR missing)',
     archive: true,
   },
 
