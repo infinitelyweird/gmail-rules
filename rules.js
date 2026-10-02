@@ -1,7 +1,7 @@
 /**
  * Declarative Gmail filtering policy.
  *
- * V4.14.1 is evidence-driven from the 10,000-message / 24-month inventory.
+ * V4.15.0 is evidence-driven from the 10,000-message / 24-month inventory.
  *
  * Fields:
  *   name       Human-readable name shown by --plan.
@@ -779,5 +779,42 @@ export const rules = [
   { name: "Promo — HeyGen events", query: "from:no_reply@learn.heygen.com", trash: true },
   { name: "Promo — Subimods marketing", query: 'from:support@subimods.com -subject:("has shipped" OR "have shipped" OR "was shipped" OR "shipping confirmation" OR "shipment update" OR "out for delivery" OR "has been delivered" OR "was delivered" OR "package delivered" OR "order delivered" OR "tracking number")', trash: true },
   { name: "Promo — Postman offers", query: "from:notifications@mail.postman.com", trash: true },
+
+  // Phase 10: ultra-low-volume promotional/newsletter tail.
+  { name: "Promo — Airbnb discovery", query: "from:discover@airbnb.com", trash: true },
+  { name: "Promo — Wendy's marketing", query: "from:mywendys@em.wendys.com", trash: true },
+  { name: "Promo — BL4CKOUT Labs marketing", query: "from:hello@bl4ckoutlabs.com", trash: true },
+  { name: "Promo — Kelsey Direct offers", query: "from:offers@shop.kelseydirect.com", trash: true },
+  { name: "Promo — TurnTo product-review requests", query: "from:notifications@turntonetworks.com", trash: true },
+  { name: "Promo — Parallels surveys", query: "from:survey@parallels-universe.com", trash: true },
+  { name: "Promo — Yokohama Tire marketing", query: "from:noreply@hello.yokohamatire.com", trash: true },
+  { name: "Promo — GNC surveys", query: "from:feedback@surveys.gnc.com", trash: true },
+  { name: "Promo — GNC rewards marketing", query: "from:gnc@rewards.gnc.com", trash: true },
+  { name: "Promo — Honda vehicle offers", query: "from:honda@em.honda.com", trash: true },
+  { name: "Promo — Weather weekly brief secondary", query: "from:weeklybrief@em.weather.com", trash: true },
+  { name: "Promo — Bug's Bite marketing", query: "from:info@ga.bugsbite.com", trash: true },
+  { name: "Promo — IHG stay surveys", query: "from:yourihgstay@express.medallia.com", trash: true },
+  { name: "Promo — Slickdeals", query: "from:deals@da.slickdeals.net", trash: true },
+  { name: "Promo — Allstate survey reminders", query: "from:noreply2017006a@allstate.opinionscx.com", trash: true },
+  { name: "Promo — 3D Printing Canada marketing", query: "from:contact@3dprintingcanada.com", trash: true },
+  { name: "Promo — Bissell TikTok Shop", query: "from:bissell_clean@tiktokshop.com", trash: true },
+  { name: "Promo — Pulsetto SafeOpt offers", query: "from:pulsetto@safeopt.com", trash: true },
+  { name: "Promo — LoveCrafts newsletter", query: "from:newsletter@e.lovecrafts.com", trash: true },
+  { name: "Promo — Turner Furniture marketing", query: "from:webmaster@turnerfurniture.com", trash: true },
+  { name: "Promo — Artflamm TikTok Shop", query: "from:artflamm@tiktokshop.com", trash: true },
+  { name: "Promo — Heelys marketing", query: "from:noreply@heelys.com", trash: true },
+  { name: "Promo — Hot Topic birthday marketing", query: "from:noreply@s.hottopic.com", trash: true },
+  { name: "Promo — Bojangles marketing", query: "from:bo@send.bojangles.com", trash: true },
+  { name: "Promo — 20th Century Studios", query: "from:updates@email.20thcenturystudios.com", trash: true },
+  { name: "Promo — Stardock product news", query: "from:info@stardock.net", trash: true },
+  { name: "Promo — OpenTable secondary marketing", query: "from:opentable@em.opentable.com", trash: true },
+  { name: "Promo — Zoom newsletter", query: "from:teamzoom@e.zoom.us", trash: true },
+  { name: "Promo — Soundtrap product news", query: "from:no-reply@news.soundtrap.com", trash: true },
+  { name: "Promo — Papa Johns rewards marketing", query: "from:rewards@dough.papajohns.com", trash: true },
+  { name: "Promo — Dropbox Plus marketing", query: "from:no-reply@em-s.dropbox.com", trash: true },
+  { name: "Promo — Disney Pictures marketing", query: "from:waltdisneypictures@em.waltdisneypictures.com", trash: true },
+  { name: "Promo — Thermo-Calc courses", query: "from:courses@thermocalc.com", trash: true },
+  { name: "Promo — Riser CardoRide newsletter", query: "from:cardoride_newsletter@news.riserapp.com", trash: true },
+  { name: "Promo — Knix marketing", query: "from:info@knix.com", trash: true },
 
 ];
