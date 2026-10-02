@@ -1,7 +1,7 @@
 /**
  * Declarative Gmail filtering policy.
  *
- * V4.15.0 is evidence-driven from the 10,000-message / 24-month inventory.
+ * V4.15.1 is evidence-driven from the 10,000-message / 24-month inventory.
  *
  * Fields:
  *   name       Human-readable name shown by --plan.
@@ -796,7 +796,7 @@ export const rules = [
   { name: "Promo — IHG stay surveys", query: "from:yourihgstay@express.medallia.com", trash: true },
   { name: "Promo — Slickdeals", query: "from:deals@da.slickdeals.net", trash: true },
   { name: "Promo — Allstate survey reminders", query: "from:noreply2017006a@allstate.opinionscx.com", trash: true },
-  { name: "Promo — 3D Printing Canada marketing", query: "from:contact@3dprintingcanada.com", trash: true },
+  { name: "Promo — 3D Printing Canada marketing", query: 'from:contact@3dprintingcanada.com -subject:(security OR "security alert" OR "new sign-in" OR "new login" OR "login attempt" OR "verification code" OR "one-time code" OR password OR "password reset" OR "account locked" OR "suspicious activity")', trash: true },
   { name: "Promo — Bissell TikTok Shop", query: "from:bissell_clean@tiktokshop.com", trash: true },
   { name: "Promo — Pulsetto SafeOpt offers", query: "from:pulsetto@safeopt.com", trash: true },
   { name: "Promo — LoveCrafts newsletter", query: "from:newsletter@e.lovecrafts.com", trash: true },
