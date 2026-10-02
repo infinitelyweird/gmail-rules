@@ -1,7 +1,7 @@
 /**
  * Declarative Gmail filtering policy.
  *
- * V4.18.0 adds sender-aware transactional shipping coverage after the V4.17 audit.
+ * V4.19.0 expands sender-aware transactional shipping coverage from the residual audit.
  *
  * Fields:
  *   name       Human-readable name shown by --plan.
@@ -230,6 +230,127 @@ export const rules = [
     name: "Verizon shipping notifications",
     label: "Purchases/Shipping",
     query: 'from:vzwmail@ecrmemail.verizonwireless.com subject:(shipping OR shipment OR tracking) -subject:(offer OR sale OR deal OR promo OR cancelled OR canceled OR delayed OR missing OR failed)',
+    archive: true,
+  },
+  // V4.19: high-confidence transactional senders from the 542-message residual.
+  {
+    name: "VapeRite shipment updates",
+    label: "Purchases/Shipping",
+    query: 'from:help@vaperite.com subject:(shipment OR shipped OR delivered OR tracking) -subject:(cancelled OR canceled OR failed OR delayed OR missing OR problem)',
+    archive: true,
+  },
+  {
+    name: "Home Depot order shipping",
+    label: "Purchases/Shipping",
+    query: 'from:homedepot@order.homedepot.com subject:(order OR shipped OR delivered OR delivery OR arriving) -subject:(cancelled OR canceled OR failed OR delayed OR missing OR problem)',
+    archive: true,
+  },
+  {
+    name: "Home Depot legacy order shipping",
+    label: "Purchases/Shipping",
+    query: 'from:homedepot@orders.homedepot.com subject:(shipping OR shipped OR delivered OR delivery OR order) -subject:(cancelled OR canceled OR failed OR delayed OR missing OR problem)',
+    archive: true,
+  },
+  {
+    name: "Amazon shipment tracking",
+    label: "Purchases/Shipping",
+    query: 'from:shipment-tracking@amazon.com -subject:(cancelled OR canceled OR failed OR delayed OR missing OR problem)',
+    archive: true,
+  },
+  {
+    name: "Nectar delivery tracking",
+    label: "Purchases/Shipping",
+    query: 'from:nectarsleep@nectarsleep.narvar.com subject:(order OR delivered OR delivery OR shipped OR shipment OR tracking) -subject:(cancelled OR canceled OR failed OR delayed OR missing OR problem)',
+    archive: true,
+  },
+  {
+    name: "Temu transactional shipping",
+    label: "Purchases/Shipping",
+    query: 'from:orders@transaction.temu.com subject:(order OR shipment OR shipped OR delivered OR delivery) -subject:(cancelled OR canceled OR failed OR delayed OR missing OR problem)',
+    archive: true,
+  },
+  {
+    name: "Temu order tracking",
+    label: "Purchases/Shipping",
+    query: 'from:order@order.temu.com subject:(package OR order OR arriving OR shipped OR delivered OR delivery) -subject:(cancelled OR canceled OR failed OR delayed OR missing OR problem)',
+    archive: true,
+  },
+  {
+    name: "Atlanta Vapor shipping",
+    label: "Purchases/Shipping",
+    query: 'from:brandon@atlantavapor.com subject:("shipping confirmation" OR shipment OR shipped OR delivered OR tracking) -subject:(cancelled OR canceled OR failed OR delayed OR missing OR problem)',
+    archive: true,
+  },
+  {
+    name: "GNC order delivery",
+    label: "Purchases/Shipping",
+    query: 'from:orders@orders.gnc.com subject:(order OR delivered OR delivery OR shipped OR shipment OR tracking) -subject:(cancelled OR canceled OR failed OR delayed OR missing OR problem)',
+    archive: true,
+  },
+  {
+    name: "OrderTrackingInfo notifications",
+    label: "Purchases/Shipping",
+    query: 'from:noreply@ordertrackinginfo.com subject:(tracking OR order OR shipment OR shipped OR delivered) -subject:(cancelled OR canceled OR failed OR delayed OR missing OR problem)',
+    archive: true,
+  },
+  {
+    name: "ShippingEasy confirmations",
+    label: "Purchases/Shipping",
+    query: 'from:noreply@shippingeasy.com subject:("shipping confirmation" OR "scheduled your order for shipment") -subject:(cancelled OR canceled OR failed OR delayed OR missing OR problem)',
+    archive: true,
+  },
+  {
+    name: "GameFly shipped",
+    label: "Purchases/Shipping",
+    query: 'from:support@gamefly.com subject:"we\'ve shipped"',
+    archive: true,
+  },
+  {
+    name: "RallySport delivery updates",
+    label: "Purchases/Shipping",
+    query: 'from:customerservice@rallysportdirect.com subject:(order AND delivered) -subject:(cancelled OR canceled OR failed OR delayed OR missing OR problem)',
+    archive: true,
+  },
+  {
+    name: "Route shipment protection",
+    label: "Purchases/Shipping",
+    query: 'from:noreply@mail.route.com subject:(shipment OR tracking OR delivered) -subject:(cancelled OR canceled OR failed OR delayed OR missing OR problem)',
+    archive: true,
+  },
+  {
+    name: "FastTech shipped orders",
+    label: "Purchases/Shipping",
+    query: 'from:support@fasttech.com subject:(shipped OR delivered OR tracking) -subject:(cancelled OR canceled OR failed OR delayed OR missing OR problem)',
+    archive: true,
+  },
+  {
+    name: "Zappos delivery updates",
+    label: "Purchases/Shipping",
+    query: 'from:cs@zappos.com subject:(order OR delivered OR shipped OR tracking) -subject:(cancelled OR canceled OR failed OR delayed OR missing OR problem)',
+    archive: true,
+  },
+  {
+    name: "Harland Clarke check shipping",
+    label: "Purchases/Shipping",
+    query: 'from:eservice@harlandclarke.com subject:("shipping confirmation" OR shipped OR delivered OR tracking) -subject:(cancelled OR canceled OR failed OR delayed OR missing OR problem)',
+    archive: true,
+  },
+  {
+    name: "Dell service-part shipping",
+    label: "Purchases/Shipping",
+    query: 'from:noreply@dell.com subject:("part shipped" OR "part shipment") -subject:(cancelled OR canceled OR failed OR delayed OR missing OR problem)',
+    archive: true,
+  },
+  {
+    name: "ROBO 3D shipping",
+    label: "Purchases/Shipping",
+    query: 'from:robo3dhelp@gmail.com subject:("shipping confirmation" OR shipment OR shipped OR delivered OR tracking) -subject:(cancelled OR canceled OR failed OR delayed OR missing OR problem)',
+    archive: true,
+  },
+  {
+    name: "TikTok Shop shipping",
+    label: "Purchases/Shipping",
+    query: 'from:no-reply@shop-us.tiktok.com subject:(package OR order OR shipped OR shipment OR delivered OR delivery) -subject:(cancelled OR canceled OR failed OR delayed OR missing OR problem)',
     archive: true,
   },
 
