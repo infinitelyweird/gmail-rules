@@ -1,0 +1,7 @@
+node_modules/
+credentials.json
+token.json
+gmail-filter-backup*.json
+sender-inventory.json
+sender-inventory.csv
+inventory-checkpoint.json
