@@ -1,5 +1,5 @@
 /**
- * Gmail Rules Installer V4.11.1
+ * Gmail Rules Installer V4.12.0
  *
  * Adds:
  * - Idempotent exact-filter detection.
