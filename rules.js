@@ -1,7 +1,7 @@
 /**
  * Declarative Gmail filtering policy.
  *
- * V4.2 is evidence-driven from the 10,000-message / 24-month inventory.
+ * V4.5 is evidence-driven from the 10,000-message / 24-month inventory.
  *
  * Fields:
  *   name       Human-readable name shown by --plan.
@@ -68,7 +68,7 @@ export const rules = [
   {
     name: "Backup reports",
     label: "Services/Backup Reports",
-    query: 'subject:("backup status report" OR "backup completed" OR "successful backup")',
+    query: 'subject:("backup status report" OR "backup completed" OR "successful backup") -subject:(failed OR failure OR error OR unsuccessful OR incomplete)',
     archive: true,
   },
   {
