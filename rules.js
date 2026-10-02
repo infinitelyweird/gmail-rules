@@ -1,7 +1,7 @@
 /**
  * Declarative Gmail filtering policy.
  *
- * V4.16.1 is evidence-driven from the 10,000-message / 24-month inventory.
+ * V4.18.0 adds sender-aware transactional shipping coverage after the V4.17 audit.
  *
  * Fields:
  *   name       Human-readable name shown by --plan.
@@ -186,6 +186,50 @@ export const rules = [
     name: "Walmart order and delivery updates",
     label: "Purchases/Shipping",
     query: 'from:help@walmart.com subject:(order OR shipped OR delivered OR delivery OR pickup) -subject:(problem OR failed OR cancelled OR canceled OR delayed OR missing)',
+    archive: true,
+  },
+  // V4.18: sender-aware transactional shipping coverage. These deliberately
+  // avoid generic standalone words such as shipment/tracking/arriving.
+  {
+    name: "FedEx delivery notifications",
+    label: "Purchases/Shipping",
+    query: 'from:trackingupdates@fedex.com -subject:(exception OR delayed OR problem OR failed OR missing OR cancelled OR canceled)',
+    archive: true,
+  },
+  {
+    name: "FedEx tracking mail",
+    label: "Purchases/Shipping",
+    query: 'from:trackingmail@fedex.com -subject:(exception OR delayed OR problem OR failed OR missing OR cancelled OR canceled)',
+    archive: true,
+  },
+  {
+    name: "UPS package notifications",
+    label: "Purchases/Shipping",
+    query: 'from:pkginfo@ups.com -subject:(exception OR delayed OR problem OR failed OR missing OR cancelled OR canceled)',
+    archive: true,
+  },
+  {
+    name: "UPS My Choice notifications",
+    label: "Purchases/Shipping",
+    query: 'from:mcinfo@ups.com -subject:(exception OR delayed OR problem OR failed OR missing OR cancelled OR canceled)',
+    archive: true,
+  },
+  {
+    name: "UPS auto notifications",
+    label: "Purchases/Shipping",
+    query: 'from:auto-notify@ups.com -subject:(exception OR delayed OR problem OR failed OR missing OR cancelled OR canceled)',
+    archive: true,
+  },
+  {
+    name: "Newegg transactional shipping",
+    label: "Purchases/Shipping",
+    query: 'from:info@newegg.com subject:(delivered OR shipped OR "tracking number") -subject:(offer OR sale OR deal OR promo OR cancelled OR canceled OR delayed OR missing OR failed)',
+    archive: true,
+  },
+  {
+    name: "Verizon shipping notifications",
+    label: "Purchases/Shipping",
+    query: 'from:vzwmail@ecrmemail.verizonwireless.com subject:(shipping OR shipment OR tracking) -subject:(offer OR sale OR deal OR promo OR cancelled OR canceled OR delayed OR missing OR failed)',
     archive: true,
   },
 
