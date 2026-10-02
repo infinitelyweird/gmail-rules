@@ -1,7 +1,7 @@
 /**
  * Declarative Gmail filtering policy.
  *
- * V4.10.0 is evidence-driven from the 10,000-message / 24-month inventory.
+ * V4.11.0 is evidence-driven from the 10,000-message / 24-month inventory.
  *
  * Fields:
  *   name       Human-readable name shown by --plan.
@@ -482,6 +482,114 @@ export const rules = [
   {
     name: "Promo — Euhomy TikTok Shop marketing",
     query: "from:euhomy@tiktokshop.com",
+    trash: true,
+  },
+
+  // Phase 6: evidence-reviewed retail/content bulk senders from the 10K inventory.
+  // Financial, account, medical, shipping and mixed loyalty senders remain excluded.
+  {
+    name: "Promo — Ruggable marketing",
+    query: "from:info@ruggable.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Wiggins Hair marketing",
+    query: "from:tg@wigginshair.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Insta360 news",
+    query: "from:hey@insta360-news.com",
+    trash: true,
+  },
+  {
+    name: "Promo — MotoLoot marketing",
+    query: "from:chris@motoloot.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Circle K Inner Circle marketing",
+    query: "from:innercircle@em.circlek.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Cracker Barrel marketing",
+    query: "from:crackerbarrelnews@email.crackerbarrel.com",
+    trash: true,
+  },
+  {
+    name: "Promo — GoodRx marketing",
+    query: "from:no-reply@contact.goodrx.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Cub Cadet marketing",
+    query: "from:cubcadet@info.cubcadet.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Artlist newsletter",
+    query: "from:team@newsletter.artlist.io",
+    trash: true,
+  },
+  {
+    name: "Promo — CollX newsletter",
+    query: "from:newsletter@collx.app",
+    trash: true,
+  },
+  {
+    name: "Promo — OpenTable recommendations",
+    query: "from:opentable@mgs.opentable.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Lumosity newsletter",
+    query: "from:newsletter@notifications.lumosity.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Agriline marketing",
+    query: "from:sales@agrilineproducts.com",
+    trash: true,
+  },
+  {
+    name: "Promo — HP Academy marketing",
+    query: "from:andre.simon@hpacademy.com",
+    trash: true,
+  },
+  {
+    name: "Promo — VEVOR marketing",
+    query: "from:marketing@ora.vevor.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Suitsupply newsletter",
+    query: "from:newsletter@message.suitsupply.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Blaze Pizza marketing",
+    query: "from:no_reply@blazepizza.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Ruggable newsletter",
+    query: "from:newsletters@ruggable.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Kickresume marketing",
+    query: "from:tomas@kickresume.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Cardo marketing",
+    query: "from:cardomarketing@cardosystems.com",
+    trash: true,
+  },
+  {
+    name: "Promo — Monster Fairings marketing",
+    query: "from:info@monsterfairings.com",
     trash: true,
   },
 
