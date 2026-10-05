@@ -1,7 +1,7 @@
 /**
  * Declarative Gmail filtering policy.
  *
- * V4.26.0 closes the final two shipping residuals with narrow sender/subject classifications.
+ * V4.27.0 removes the unsafe blanket Delta sender trash rule after legacy-filter review.
  *
  * Fields:
  *   name       Human-readable name shown by --plan.
@@ -1262,11 +1262,6 @@ export const rules = [
   {
     name: "Promo — Thangs user updates",
     query: "from:thangs-user-updates@thangs.com",
-    trash: true,
-  },
-  {
-    name: "Promo — Delta marketing",
-    query: "from:deltaairlines@o.delta.com",
     trash: true,
   },
   {
