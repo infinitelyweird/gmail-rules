@@ -1,7 +1,7 @@
 /**
  * Declarative Gmail filtering policy.
  *
- * V4.21.0 expands sender-aware transactional shipping coverage from the post-fossil residual audit.
+ * V4.24.0 classifies the final residual shipping audit with sender-aware routine and exception rules.
  *
  * Fields:
  *   name       Human-readable name shown by --plan.
@@ -176,6 +176,64 @@ export const rules = [
     archive: false,
     important: true,
   },
+  // V4.24: final residual shipping audit.
+  // Consequential failures/exceptions stay visible; routine shipment records archive.
+  {
+    name: "Air Filters Delivered payment verification",
+    label: "Action/Bills Due",
+    query: 'from:support@airfiltersdelivered.com subject:"Verify your payment information"',
+    archive: false,
+    important: true,
+  },
+  {
+    name: "Air Filters Delivered subscription reconfirmation",
+    label: "Action/Account Problems",
+    query: 'from:support@airfiltersdelivered.com subject:"Reconfirm Your Filter Subscription Details"',
+    archive: false,
+    important: true,
+  },
+  {
+    name: "Air Filters Delivered recurring charges",
+    label: "Finance/Payments",
+    query: 'from:support@airfiltersdelivered.com subject:("recurring order charge confirmation" OR "recurring order purchase confirmation")',
+    archive: true,
+  },
+  {
+    name: "Comcast e-bill delivery failures",
+    label: "Action/Bills Due",
+    query: 'from:tsfcubillpay@southernonline.org subject:("e-bill not delivered")',
+    archive: false,
+    important: true,
+  },
+  {
+    name: "Vetsource shipment problems",
+    label: "Action/Delivery Problems",
+    query: 'from:homedelivery@vetsource.com subject:("Auto-Shipment" AND (Canceled OR Failure))',
+    archive: false,
+    important: true,
+  },
+  {
+    name: "FastTech cancelled shipments",
+    label: "Action/Delivery Problems",
+    query: 'from:support@fasttech.com subject:(shipment AND cancelled)',
+    archive: false,
+    important: true,
+  },
+  {
+    name: "Mysterious Package shipment disruption",
+    label: "Action/Delivery Problems",
+    query: 'from:concierge@mysteriouspackage.com subject:"Shipment Disruption"',
+    archive: false,
+    important: true,
+  },
+  {
+    name: "Amazon unconfirmed shipment notice",
+    label: "Action/Delivery Problems",
+    query: 'from:payments-messages@amazon.com subject:("Shipment of your order" AND "not been confirmed")',
+    archive: false,
+    important: true,
+  },
+
   {
     name: "Amazon order updates",
     label: "Purchases/Shipping",
@@ -928,6 +986,38 @@ export const rules = [
     name: "Promo — Euhomy TikTok Shop marketing",
     query: "from:euhomy@tiktokshop.com",
     trash: true,
+  },
+
+  // V4.24: narrow routine-shipping rules for final residual records.
+  {
+    name: "Obsession Products delivered orders",
+    label: "Purchases/Shipping",
+    query: 'from:3b1c0svrtsd1gn5@marketplace.amazon.com subject:"Recently Delivered"',
+    archive: true,
+  },
+  {
+    name: "RoadRunner auto transport shipping",
+    label: "Purchases/Shipping",
+    query: 'from:timothy.romano@v2logistics.com subject:(Shipment OR "Carrier Availability")',
+    archive: true,
+  },
+  {
+    name: "Fox Theatre mobile ticket delivery",
+    label: "Purchases/Shipping",
+    query: 'from:foxguestrelations@foxtheatre.org subject:"Mobile Tickets have been Delivered"',
+    archive: true,
+  },
+  {
+    name: "CarGuys shipment follow-up",
+    label: "Purchases/Shipping",
+    query: 'from:btqkg37gjp11448@marketplace.amazon.com subject:"item shipped"',
+    archive: true,
+  },
+  {
+    name: "Forwarded UPS tracking records",
+    label: "Purchases/Shipping",
+    query: 'from:dustin.flegel@gmail.com subject:("UPS Ship Notification" OR "TRACKING ID:" OR "Shipment of your Subaru Impreza WRX")',
+    archive: true,
   },
 
   // Phase 6: evidence-reviewed retail/content bulk senders from the 10K inventory.
