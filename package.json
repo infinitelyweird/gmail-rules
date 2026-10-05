@@ -20,6 +20,7 @@
     "migrate:shipping-residual": "node migrate-shipping-residual.js",
     "audit:shipping-label": "node audit-shipping-label.js",
     "audit:shipping-residual": "node audit-shipping-residual.js",
+    "audit:historical-noise": "node audit-historical-noise.js",
     "cleanup:shipping-fossils": "node cleanup-shipping-fossils.js"
   },
   "dependencies": {
