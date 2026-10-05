@@ -1,5 +1,5 @@
 /**
- * V4.20 shipping fossil cleanup — evidence-reviewed batch 2.
+ * V4.21 shipping fossil cleanup — evidence-reviewed batch 3.
  *
  * Preview-only by default. Execution requires BOTH --apply and --yes.
  * Removes ONLY the Purchases/Shipping label from high-confidence historical
@@ -138,6 +138,93 @@ const fossilCandidateQueries = [
   ["Uber Eats marketing secondary", 'from:ubereats@uber.com'],
   ["Visionworks marketing", 'from:visionworks@e.visionworks.com'],
   ["Woodcraft marketing", 'from:donotreply@woodcraft.com'],
+
+  // Batch 3: semantic shipping-word collisions from the 285-message residual.
+  // Every query is sender/subject constrained; real transactional records are
+  // now explained by V4.21 rules.js and are therefore automatically excluded.
+  ["CareZone refill-delivery reminders", 'from:no-reply@carezone.com subject:"Get your refill"'],
+  ["Air Filters Delivered subscription reconfirmation", 'from:support@airfiltersdelivered.com subject:"Reconfirm Your Filter Subscription Details"'],
+  ["Air Filters Delivered recurring charge", 'from:support@airfiltersdelivered.com subject:"recurring order charge confirmation"'],
+  ["Air Filters Delivered payment verification", 'from:support@airfiltersdelivered.com subject:"Verify your payment information"'],
+  ["Pestie post-delivery reminders", 'from:hello@pestie.com subject:("still sitting around" OR "used your recent pestie shipment")'],
+  ["eBay Fast N Free marketing", 'from:ebay@ebay.com subject:"can be delivered Fast N Free"'],
+  ["Tophatter personalized marketing", 'from:noreply@tophatter.com subject:("Personalized deals delivered" OR "Personalized picks have been delivered")'],
+  ["TurboTax non-shipping tracking content", 'from:TurboTax@e.turbotax.intuit.com'],
+  ["Oliviers shipping-language marketing", 'from:customerservice@oliviersandco.com'],
+  ["1-800 Contacts delivery marketing", 'from:email@email-1800contacts.com subject:"Stay in. Stay warm."'],
+  ["Fisher Wallace tracking-language marketing", 'from:info@fisherwallace.com'],
+  ["Ground News tracking-language newsletters", 'from:blindspot@ground-news.com'],
+  ["Health Exec tracking-language newsletters", 'from:news@mail.healthexec.com'],
+  ["Hemper delivered-language marketing", 'from:contact@hemper.co'],
+  ["MatterHackers delivered-language content", 'from:support@matterhackers.com'],
+  ["Comcast e-bill delivery failures", 'from:tsfcubillpay@southernonline.org'],
+  ["AM.CO.ZA product-arrival marketing", 'from:updates@am.co.za'],
+  ["Telerik software shipped announcement", 'from:sells.chris@telerik.com'],
+  ["FragranceNet slogan marketing", 'from:info@email.fragrancenet.com subject:"Shopped. Shipped. Delivered."'],
+  ["H&R Block refund tracking survey", 'from:onlinetaxes@hrblock.com'],
+  ["Mann Lake pre-order marketing", 'from:noreply@mannlakeltd.com'],
+  ["Morgan and Morgan delivered-language marketing", 'from:reply@reply.forthepeople.com'],
+  ["Pokemon GO retail-arrival marketing", 'from:pokemongo@email.nianticlabs.com'],
+  ["Nextdoor package conversation", 'from:reply@ss.email.nextdoor.com'],
+  ["ripple delivered-language marketing", 'from:info@therippleco.com'],
+  ["Steak n Shake delivery marketing", 'from:steaknshakerewards@rewards.steaknshake.com'],
+  ["TLDR tracking-language newsletter", 'from:dan@tldrnewsletter.com'],
+  ["Bank of America delivered-language marketing", 'from:bankofamerica@emcom.bankofamerica.com'],
+  ["Best Egg credit-tracking marketing", 'from:financialhealth@email.bestegg.com'],
+  ["Brew Tea arriving-soon marketing", 'from:hello@brewteacompany.co.uk'],
+  ["Cardo Ride tracking feature marketing", 'from:newsletter@news.riserapp.com'],
+  ["Carvana delivery marketing", 'from:customeradvocate@carvana.com'],
+  ["Catholic Social Services arriving-soon appeal", 'from:hello@cssisus.org'],
+  ["Circuit Specialists inventory arrival", 'from:newsletters@circuitspecialists.com'],
+  ["CurlsCurls collection arrival marketing", 'from:service@curlscurls.com'],
+  ["CVS ExtraCare delivery marketing", 'from:extracare@pharmacy.cvs.com'],
+  ["CVS Pharmacy delivery marketing", 'from:pharmacy@pharmacy.cvs.com'],
+  ["Dekanta product-arrival marketing", 'from:cs@dekanta.com'],
+  ["DoorDash restaurant-name collision", 'from:no-reply@doordash.com subject:"Delivered Fresh Daily"'],
+  ["Factor delivery marketing residual", 'from:No-reply@factor75.com'],
+  ["Fox Theatre ticket delivery", 'from:foxguestrelations@foxtheatre.org'],
+  ["Geekvape inventory shipping message", 'from:store@geekvape.com subject:"Inventory is low"'],
+  ["Gofreecredit delivered-language marketing", 'from:gfc@2015onine-now.com'],
+  ["Grassfire shipment-language campaign", 'from:alert@grassfire.net'],
+  ["Vyond delivered-language product announcement", 'from:community@vyond.com'],
+  ["Honeywell air-filter marketing", 'from:HoneywellHome@e.honeywellhome.com'],
+  ["Hours time-tracking welcome", 'from:support@hourstimetracking.com'],
+  ["Infinite Peripherals delivered-language marketing", 'from:marketingteam@ipcmobile.com'],
+  ["Natures Garden company-name collision", 'from:info@ga.naturesgardendelivered.com'],
+  ["Inkbox faster-shipping marketing", 'from:hi@e.inkbox.com'],
+  ["iPad Pilot tracking-app newsletter", 'from:iPad@e.sportys.com'],
+  ["Liberty Counsel delivered-language campaign", 'from:alert@lcaction.org'],
+  ["Maneuvering the Middle tracking content", 'from:contact@maneuveringthemiddle.com'],
+  ["Marcos Pizza delivered-language deal", 'from:noreply@marcos.com'],
+  ["Sustain cycle-tracking content", 'from:meikah@sustainnatural.com'],
+  ["Mellow Mushroom delivery marketing", 'from:MellowMushroom@mellowmushroom.fbmta.com'],
+  ["Meta Horizon arriving-language notification", 'from:do_not_reply@email.meta.com'],
+  ["Microsoft Store delivery marketing", 'from:Microsoftstore@microsoftstore.microsoft.com'],
+  ["Naturisimo arriving-soon marketing", 'from:news@naturisimo.com'],
+  ["Naymz visitor tracking alert", 'from:app@naymz.com'],
+  ["Nurx treatment-delivery marketing", 'from:engagements@marketing.nurx.com'],
+  ["Oliver Thomas instant-delivery gift marketing", 'from:ollie@theoliverthomas.com'],
+  ["PODS vehicle-shipping marketing", 'from:PODS@e.pods.com'],
+  ["PolarX delivered-language marketing", 'from:info@polarxornaments.com'],
+  ["QuickBooks mileage tracking feature", 'from:intuithealth@e.intuithealth.com'],
+  ["realbuzz delivered-language newsletter", 'from:info@realbuzz.com'],
+  ["Retool tracking-language developer content", 'from:info@retool.com'],
+  ["Route holiday tracking marketing", 'from:noreply@hello.route.com'],
+  ["ScoreMore rewards arriving marketing", 'from:noreply@scoremorerewards.com'],
+  ["Simple Living review request", 'from:6yl17vcwjw7dpk7@marketplace.amazon.com subject:"Tell us how we did"'],
+  ["Special Promotions shipment bait", 'from:contact@pr.morristownagreement.com'],
+  ["Stadia delivered-language game announcement", 'from:stadia-noreply@google.com'],
+  ["Strikeman progress tracking content", 'from:support@strikeman.io'],
+  ["Super Chewer free-gift marketing", 'from:scout@woof.barkbox.com'],
+  ["DreamFactory tracking-data content", 'from:susanna.bouse@dreamfactory.com'],
+  ["Temu local-warehouse marketing", 'from:email@market.temuemail.com'],
+  ["Dua Brand delivered-language marketing", 'from:support@theduabrand.com'],
+  ["Futurist delivery-language newsletter", 'from:email@email.getthefuturist.com'],
+  ["SoFi Daily delivered-language newsletter", 'from:SoFi@daily.sofi.com'],
+  ["Telerik release shipped announcement", 'from:progresssoftware@businessmaking.progress.net'],
+  ["Week Ahead tracking-language newsletter", 'from:theweekahead@tryshift.com'],
+  ["ThinkGeek tracking-language marketing", 'from:overlords@email.thinkgeek.com'],
+  ["Ubuy delivered-language marketing", 'from:no-reply@ubuycnt.com'],
 ];
 
 async function allIds(gmail, query) {
@@ -172,7 +259,7 @@ for (const rule of shippingRules) {
 const unexplainedSet = new Set([...labeledIds].filter(id => !explainedIds.has(id)));
 
 const candidateIds = new Set();
-console.log("V4.20 SHIPPING FOSSIL CLEANUP");
+console.log("V4.21 SHIPPING FOSSIL CLEANUP");
 console.log(execute ? "MODE: APPLY" : "MODE: PREVIEW");
 for (const [name, query] of fossilCandidateQueries) {
   const ids = await allIds(gmail, `(${query}) label:"${LABEL}" -in:trash -in:spam`);
