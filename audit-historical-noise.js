@@ -17,10 +17,21 @@ const RATE_LIMIT_RETRIES = 6;
 const OLD_INBOX_CUTOFF = "2026/01/01";
 
 async function count(query) {
-  const r = await gmail.users.messages.list({
-    userId: "me", q: query, maxResults: 1,
-  });
-  return r.data.resultSizeEstimate || 0;
+  // Gmail resultSizeEstimate is deliberately approximate. Page through IDs so
+  // audit totals are exact without spending message.get quota.
+  let total = 0;
+  let pageToken;
+  do {
+    const r = await gmail.users.messages.list({
+      userId: "me",
+      q: query,
+      maxResults: 500,
+      pageToken,
+    });
+    total += (r.data.messages || []).length;
+    pageToken = r.data.nextPageToken;
+  } while (pageToken);
+  return total;
 }
 
 async function ids(query, limit = MAX_SENDER_SAMPLE) {
@@ -122,13 +133,18 @@ printCounts("MAIL STATE", stateRows);
 
 const labelResponse = await gmail.users.labels.list({ userId: "me" });
 const customLabels = (labelResponse.data.labels || [])
-  .filter(l => l.type === "user")
-  .sort((a, b) => (b.messagesTotal || 0) - (a.messagesTotal || 0));
+  .filter(l => l.type === "user");
 
-printCounts(
-  "TOP CUSTOM LABELS",
-  customLabels.slice(0, 30).map(l => [l.name, l.messagesTotal || 0])
-);
+// labels.list returns label identities but not reliable message totals. Fetch
+// each label resource individually; labels.get includes messagesTotal.
+const customLabelCounts = [];
+for (const label of customLabels) {
+  const detail = await gmail.users.labels.get({ userId: "me", id: label.id });
+  customLabelCounts.push([label.name, detail.data.messagesTotal || 0]);
+}
+customLabelCounts.sort((a, b) => b[1] - a[1]);
+
+printCounts("TOP CUSTOM LABELS", customLabelCounts.slice(0, 30));
 
 const sampleIds = await ids("in:inbox -in:trash -in:spam");
 const sample = await headers(sampleIds);
