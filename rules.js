@@ -1,7 +1,7 @@
 /**
  * Declarative Gmail filtering policy.
  *
- * V4.19.0 expands sender-aware transactional shipping coverage from the residual audit.
+ * V4.21.0 expands sender-aware transactional shipping coverage from the post-fossil residual audit.
  *
  * Fields:
  *   name       Human-readable name shown by --plan.
@@ -351,6 +351,261 @@ export const rules = [
     name: "TikTok Shop shipping",
     label: "Purchases/Shipping",
     query: 'from:no-reply@shop-us.tiktok.com subject:(package OR order OR shipped OR shipment OR delivered OR delivery) -subject:(cancelled OR canceled OR failed OR delayed OR missing OR problem)',
+    archive: true,
+  },
+
+  // V4.21: transactional shipping confirmed in the 285-message post-fossil residual.
+  // Mixed senders remain sender + subject constrained to avoid marketing collisions.
+  {
+    name: "Air Filters Delivered shipment notices",
+    label: "Purchases/Shipping",
+    query: 'from:support@airfiltersdelivered.com subject:("upcoming shipment" OR "shipment is on the way" OR shipped OR "shipping confirmation") -subject:(cancelled OR canceled OR failed OR problem OR "payment information" OR charge)',
+    archive: true,
+  },
+  {
+    name: "Shop app tracking updates",
+    label: "Purchases/Shipping",
+    query: 'from:noreply@shop.app subject:("tracking updates" OR "received your order")',
+    archive: true,
+  },
+  {
+    name: "Pestie shipments",
+    label: "Purchases/Shipping",
+    query: 'from:hello@pestie.com subject:"shipment is on its way"',
+    archive: true,
+  },
+  {
+    name: "eBay transactional shipping",
+    label: "Purchases/Shipping",
+    query: 'from:ebay@ebay.com subject:("SHIPPED:" OR "DELIVERED:")',
+    archive: true,
+  },
+  {
+    name: "eBay Canada transactional shipping",
+    label: "Purchases/Shipping",
+    query: 'from:ebay@ebay.ca subject:"SHIPPED:"',
+    archive: true,
+  },
+  {
+    name: "1-800 Contacts shipping confirmations",
+    label: "Purchases/Shipping",
+    query: '(from:info@t.1800contacts.com OR from:email@email-1800contacts.com) subject:"Shipping Confirmation"',
+    archive: true,
+  },
+  {
+    name: "Newegg arrival updates",
+    label: "Purchases/Shipping",
+    query: 'from:info@newegg.com subject:"Now arriving early"',
+    archive: true,
+  },
+  {
+    name: "Capital One card shipping",
+    label: "Purchases/Shipping",
+    query: 'from:capitalone@email.capitalone.com subject:"shipped your new card"',
+    archive: true,
+  },
+  {
+    name: "ServeCo part shipping",
+    label: "Purchases/Shipping",
+    query: 'from:servecoservice@serveco.com subject:("Part Shipped Reminder" OR "Part shipment reminder")',
+    archive: true,
+  },
+  {
+    name: "Banfield First Shield shipping",
+    label: "Purchases/Shipping",
+    query: 'from:salesadmin@banfield.net subject:("First Shield Option Shipped")',
+    archive: true,
+  },
+  {
+    name: "OneMain BrightWay card shipping",
+    label: "Purchases/Shipping",
+    query: 'from:onemain@service.omf.com subject:"BrightWay card is arriving soon"',
+    archive: true,
+  },
+  {
+    name: "Skype purchase delivery",
+    label: "Purchases/Shipping",
+    query: 'from:noreply@notifications.skype.com subject:("delivered your order" OR "delivered your purchase")',
+    archive: true,
+  },
+  {
+    name: "1-800-Flowers shipping confirmation",
+    label: "Purchases/Shipping",
+    query: 'from:custserv@1800flowers.com subject:"Shipping Confirmation"',
+    archive: true,
+  },
+  {
+    name: "AMD Store shipping confirmation",
+    label: "Purchases/Shipping",
+    query: 'from:noreply@mail.onlinestore.amd.com subject:"Shipping Confirmation"',
+    archive: true,
+  },
+  {
+    name: "Pennsylvania Vital Records shipping",
+    label: "Purchases/Shipping",
+    query: 'from:ra-dhMyPACertificate@pa.gov subject:shipped',
+    archive: true,
+  },
+  {
+    name: "LEGO order tracking",
+    label: "Purchases/Shipping",
+    query: 'from:guest-order-status@m.lego.com subject:("Tracking info" AND order)',
+    archive: true,
+  },
+  {
+    name: "Lush order shipping",
+    label: "Purchases/Shipping",
+    query: 'from:orders@lush.com subject:(order AND shipped)',
+    archive: true,
+  },
+  {
+    name: "PayPal Cashback card shipping",
+    label: "Purchases/Shipping",
+    query: 'from:ppv@mail.synchronybank.com subject:("PayPal Cashback" AND shipped)',
+    archive: true,
+  },
+  {
+    name: "PlugYourHoles order arrival",
+    label: "Purchases/Shipping",
+    query: 'from:no-reply@getredo.com subject:(order AND arriving)',
+    archive: true,
+  },
+  {
+    name: "RepairClinic shipping confirmation",
+    label: "Purchases/Shipping",
+    query: 'from:customerservice@email.repairclinic.com subject:"Shipping Confirmation"',
+    archive: true,
+  },
+  {
+    name: "AliExpress order shipping",
+    label: "Purchases/Shipping",
+    query: 'from:transaction@notice.aliexpress.com subject:(order AND shipped)',
+    archive: true,
+  },
+  {
+    name: "Apple Card delivery",
+    label: "Purchases/Shipping",
+    query: 'from:noreply@applepay.apple.com subject:("Apple Card" AND arriving)',
+    archive: true,
+  },
+  {
+    name: "Atlanta Vapor legacy shipping",
+    label: "Purchases/Shipping",
+    query: 'from:brandon@sbas.us subject:"Shipping confirmation"',
+    archive: true,
+  },
+  {
+    name: "Cash App Card shipping",
+    label: "Purchases/Shipping",
+    query: 'from:cash@square.com subject:("Cash App Card" AND shipped)',
+    archive: true,
+  },
+  {
+    name: "ClothingShopOnline marketplace shipping",
+    label: "Purchases/Shipping",
+    query: 'from:5d6h11mbq2m846g@marketplace.amazon.com subject:(Shipment AND Order)',
+    archive: true,
+  },
+  {
+    name: "OWC invoice shipping",
+    label: "Purchases/Shipping",
+    query: 'from:do-not-reply@macsales.com subject:(Invoice AND shipped)',
+    archive: true,
+  },
+  {
+    name: "Etsy delivery notifications",
+    label: "Purchases/Shipping",
+    query: 'from:noreply@account.etsy.com subject:("just delivered" OR "order shipped" OR "has shipped")',
+    archive: true,
+  },
+  {
+    name: "Freeland Outdoor marketplace tracking",
+    label: "Purchases/Shipping",
+    query: 'from:5fhjsnh5fzk9ldg@marketplace.amazon.com subject:("Order Tracking Info" OR "Package Notification")',
+    archive: true,
+  },
+  {
+    name: "Workhuman reward shipping",
+    label: "Purchases/Shipping",
+    query: 'from:globalpayments@workhuman.com subject:"has been shipped"',
+    archive: true,
+  },
+  {
+    name: "Hills Point marketplace delivery",
+    label: "Purchases/Shipping",
+    query: 'from:htqz9pbnk96sjfc@marketplace.amazon.com subject:"ARRIVING SOON"',
+    archive: true,
+  },
+  {
+    name: "MANSCAPED order shipping",
+    label: "Purchases/Shipping",
+    query: 'from:noreply@manscaped.com subject:(SHIPPED AND order)',
+    archive: true,
+  },
+  {
+    name: "Parts Geek tracking",
+    label: "Purchases/Shipping",
+    query: 'from:shipment-tracking@partsgeek.com subject:("Tracking Update" AND Order)',
+    archive: true,
+  },
+  {
+    name: "Pier 420 shipment",
+    label: "Purchases/Shipping",
+    query: 'from:info@pier420.com subject:(Shipment AND Order)',
+    archive: true,
+  },
+  {
+    name: "SubiSpeed transactional shipment",
+    label: "Purchases/Shipping",
+    query: 'from:orders@subispeed.com subject:(Shipment AND Order)',
+    archive: true,
+  },
+  {
+    name: "SMY Performance shipment",
+    label: "Purchases/Shipping",
+    query: 'from:Support@smyperformance.com subject:(Shipment AND Order)',
+    archive: true,
+  },
+  {
+    name: "State Farm beacon shipping",
+    label: "Purchases/Shipping",
+    query: 'from:statefarminfo@statefarminfo.com subject:(Shipped AND beacon)',
+    archive: true,
+  },
+  {
+    name: "Target order arrival",
+    label: "Purchases/Shipping",
+    query: 'from:orders@oe.target.com subject:(item AND arriving AND Order)',
+    archive: true,
+  },
+  {
+    name: "Temu legacy order delivery",
+    label: "Purchases/Shipping",
+    query: 'from:order@order.temuemail.com subject:(order AND delivered)',
+    archive: true,
+  },
+  {
+    name: "Whatnot order delivery",
+    label: "Purchases/Shipping",
+    query: 'from:orders@whatnot.com subject:(Delivered AND order)',
+    archive: true,
+  },
+  {
+    name: "XKGLOW shipping confirmation",
+    label: "Purchases/Shipping",
+    query: 'from:xk@xkglow.com subject:"Shipping confirmation"',
+    archive: true,
+  },
+  {
+    name: "ThankYouEmails shipping confirmations",
+    label: "Purchases/Shipping",
+    query: 'from:support@thankyouemails.org subject:"Shipping confirmation"',
+    archive: true,
+  },
+  {
+    name: "Yubico order shipment",
+    label: "Purchases/Shipping",
+    query: 'from:no-reply@yubico.com subject:(order AND shipment)',
     archive: true,
   },
 
