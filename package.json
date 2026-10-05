@@ -17,6 +17,7 @@
     "migrate:backup": "node gmail-organizer.js --migrate-backup",
     "migrate:shipping": "node gmail-organizer.js --migrate-shipping",
     "migrate:shipping-routine": "node gmail-organizer.js --migrate-shipping-routine",
+    "migrate:shipping-residual": "node migrate-shipping-residual.js",
     "audit:shipping-label": "node audit-shipping-label.js",
     "audit:shipping-residual": "node audit-shipping-residual.js",
     "cleanup:shipping-fossils": "node cleanup-shipping-fossils.js"
