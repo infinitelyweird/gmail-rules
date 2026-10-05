@@ -20,6 +20,7 @@ const BACKUP = "gmail-filter-backup-v4.json";
 // Exact legacy filter IDs reviewed from the V4.1 audit. Cleanup is deliberately
 // allow-listed: nothing merely "similar" is removed.
 const LEGACY_CLEANUP_IDS = new Set([
+  "ANe1BmhgdRa62lqS4fYiBKpxSULLV8ETFmNdXg", // Delta: blanket sender trash (V4.27 reviewed)
   "ANe1Bmh5UYxTcM4Rc2w9F5Htt3IhUn8Wvq8Kkw", // Travelocity: mark read + trash
   "ANe1BmgJqYzGUkYp8V7zswTlhhGfoNQyTCSDcA", // American Airlines: trash
   "ANe1BmhuHAvXibUPORyefMz_mtRIMobJ9q4yWQ", // Travelocity: trash
