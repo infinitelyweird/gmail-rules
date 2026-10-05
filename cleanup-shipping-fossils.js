@@ -1,5 +1,5 @@
 /**
- * V4.21 shipping fossil cleanup — evidence-reviewed batch 3.
+ * V4.22 shipping fossil cleanup — evidence-reviewed batch 3.
  *
  * Preview-only by default. Execution requires BOTH --apply and --yes.
  * Removes ONLY the Purchases/Shipping label from high-confidence historical
@@ -140,12 +140,9 @@ const fossilCandidateQueries = [
   ["Woodcraft marketing", 'from:donotreply@woodcraft.com'],
 
   // Batch 3: semantic shipping-word collisions from the 285-message residual.
-  // Every query is sender/subject constrained; real transactional records are
-  // now explained by V4.21 rules.js and are therefore automatically excluded.
+  // Consequential billing/account/ticket records are intentionally excluded
+  // from automatic label removal and left for explicit classification.
   ["CareZone refill-delivery reminders", 'from:no-reply@carezone.com subject:"Get your refill"'],
-  ["Air Filters Delivered subscription reconfirmation", 'from:support@airfiltersdelivered.com subject:"Reconfirm Your Filter Subscription Details"'],
-  ["Air Filters Delivered recurring charge", 'from:support@airfiltersdelivered.com subject:"recurring order charge confirmation"'],
-  ["Air Filters Delivered payment verification", 'from:support@airfiltersdelivered.com subject:"Verify your payment information"'],
   ["Pestie post-delivery reminders", 'from:hello@pestie.com subject:("still sitting around" OR "used your recent pestie shipment")'],
   ["eBay Fast N Free marketing", 'from:ebay@ebay.com subject:"can be delivered Fast N Free"'],
   ["Tophatter personalized marketing", 'from:noreply@tophatter.com subject:("Personalized deals delivered" OR "Personalized picks have been delivered")'],
@@ -157,7 +154,6 @@ const fossilCandidateQueries = [
   ["Health Exec tracking-language newsletters", 'from:news@mail.healthexec.com'],
   ["Hemper delivered-language marketing", 'from:contact@hemper.co'],
   ["MatterHackers delivered-language content", 'from:support@matterhackers.com'],
-  ["Comcast e-bill delivery failures", 'from:tsfcubillpay@southernonline.org'],
   ["AM.CO.ZA product-arrival marketing", 'from:updates@am.co.za'],
   ["Telerik software shipped announcement", 'from:sells.chris@telerik.com'],
   ["FragranceNet slogan marketing", 'from:info@email.fragrancenet.com subject:"Shopped. Shipped. Delivered."'],
@@ -182,7 +178,6 @@ const fossilCandidateQueries = [
   ["Dekanta product-arrival marketing", 'from:cs@dekanta.com'],
   ["DoorDash restaurant-name collision", 'from:no-reply@doordash.com subject:"Delivered Fresh Daily"'],
   ["Factor delivery marketing residual", 'from:No-reply@factor75.com'],
-  ["Fox Theatre ticket delivery", 'from:foxguestrelations@foxtheatre.org'],
   ["Geekvape inventory shipping message", 'from:store@geekvape.com subject:"Inventory is low"'],
   ["Gofreecredit delivered-language marketing", 'from:gfc@2015onine-now.com'],
   ["Grassfire shipment-language campaign", 'from:alert@grassfire.net'],
@@ -259,7 +254,7 @@ for (const rule of shippingRules) {
 const unexplainedSet = new Set([...labeledIds].filter(id => !explainedIds.has(id)));
 
 const candidateIds = new Set();
-console.log("V4.21 SHIPPING FOSSIL CLEANUP");
+console.log("V4.22 SHIPPING FOSSIL CLEANUP");
 console.log(execute ? "MODE: APPLY" : "MODE: PREVIEW");
 for (const [name, query] of fossilCandidateQueries) {
   const ids = await allIds(gmail, `(${query}) label:"${LABEL}" -in:trash -in:spam`);
