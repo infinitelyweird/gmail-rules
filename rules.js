@@ -609,6 +609,31 @@ export const rules = [
     archive: true,
   },
 
+  {
+    name: "SellGPU shipment received",
+    label: "Purchases/Shipping",
+    query: 'from:info@sellgpu.com subject:"Shipment Received"',
+    archive: true,
+  },
+  {
+    name: "Personal package tracking notice",
+    label: "Purchases/Shipping",
+    query: 'from:rcook@youhaveapackage.com subject:"Tracking Number"',
+    archive: true,
+  },
+  {
+    name: "Subaru auto-transport shipment",
+    label: "Purchases/Shipping",
+    query: 'from:timothy.romano@v2logistics.com subject:"Shipment of your Subaru Impreza WRX"',
+    archive: true,
+  },
+  {
+    name: "TRACK718 delivery status",
+    label: "Purchases/Shipping",
+    query: 'from:service@track718.net subject:"delivery status is delivered"',
+    archive: true,
+  },
+
   // High-confidence promotional/newsletter addresses from the 10K inventory.
   // These rules affect FUTURE mail only. Historical cleanup is a separate pass.
   {
