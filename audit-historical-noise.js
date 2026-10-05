@@ -1,0 +1,127 @@
+/**
+ * V4.28 historical noise audit — READ ONLY.
+ *
+ * Produces a ranked inventory of historical Gmail cleanup opportunities.
+ * This script never changes messages, labels, filters, or thread state.
+ */
+import { google } from "googleapis";
+import { getAuth } from "./auth.js";
+
+const auth = await getAuth();
+const gmail = google.gmail({ version: "v1", auth });
+
+const MAX_SENDER_SAMPLE = 5000;
+const OLD_INBOX_CUTOFF = "2026/01/01";
+
+async function count(query) {
+  const r = await gmail.users.messages.list({
+    userId: "me", q: query, maxResults: 1,
+  });
+  return r.data.resultSizeEstimate || 0;
+}
+
+async function ids(query, limit = MAX_SENDER_SAMPLE) {
+  const out = [];
+  let pageToken;
+  do {
+    const r = await gmail.users.messages.list({
+      userId: "me",
+      q: query,
+      maxResults: Math.min(500, limit - out.length),
+      pageToken,
+    });
+    out.push(...(r.data.messages || []).map(m => m.id));
+    pageToken = r.data.nextPageToken;
+  } while (pageToken && out.length < limit);
+  return out.slice(0, limit);
+}
+
+async function headers(messageIds) {
+  const out = [];
+  for (let i = 0; i < messageIds.length; i += 100) {
+    const batch = messageIds.slice(i, i + 100);
+    const rows = await Promise.all(batch.map(async id => {
+      const r = await gmail.users.messages.get({
+        userId: "me",
+        id,
+        format: "metadata",
+        metadataHeaders: ["From", "Subject", "Date"],
+      });
+      const h = Object.fromEntries(
+        (r.data.payload?.headers || []).map(x => [x.name.toLowerCase(), x.value])
+      );
+      return { id, from: h.from || "(unknown)", subject: h.subject || "(no subject)", date: h.date || "" };
+    }));
+    out.push(...rows);
+  }
+  return out;
+}
+
+function senderAddress(from) {
+  const m = from.match(/<([^>]+)>/);
+  return (m ? m[1] : from).trim().toLowerCase();
+}
+
+function printCounts(title, rows) {
+  console.log("\n" + title);
+  for (const [name, value] of rows) {
+    console.log(String(value).padStart(7) + "  " + name);
+  }
+}
+
+console.log("V4.28 HISTORICAL NOISE AUDIT — READ ONLY");
+
+const stateQueries = [
+  ["Inbox", "in:inbox -in:trash -in:spam"],
+  ["Unread Inbox", "in:inbox is:unread -in:trash -in:spam"],
+  ["Old Inbox (before 2026)", `in:inbox before:${OLD_INBOX_CUTOFF} -in:trash -in:spam`],
+  ["Promotions", "category:promotions -in:trash -in:spam"],
+  ["Social", "category:social -in:trash -in:spam"],
+  ["Updates", "category:updates -in:trash -in:spam"],
+  ["Forums", "category:forums -in:trash -in:spam"],
+];
+
+const stateRows = [];
+for (const [name, q] of stateQueries) stateRows.push([name, await count(q)]);
+printCounts("MAIL STATE", stateRows);
+
+const labelResponse = await gmail.users.labels.list({ userId: "me" });
+const customLabels = (labelResponse.data.labels || [])
+  .filter(l => l.type === "user")
+  .sort((a, b) => (b.messagesTotal || 0) - (a.messagesTotal || 0));
+
+printCounts(
+  "TOP CUSTOM LABELS",
+  customLabels.slice(0, 30).map(l => [l.name, l.messagesTotal || 0])
+);
+
+const sampleIds = await ids("in:inbox -in:trash -in:spam");
+const sample = await headers(sampleIds);
+const senders = new Map();
+for (const m of sample) {
+  const sender = senderAddress(m.from);
+  senders.set(sender, (senders.get(sender) || 0) + 1);
+}
+const senderRows = [...senders.entries()]
+  .sort((a, b) => b[1] - a[1])
+  .slice(0, 40);
+
+console.log(`\nTOP INBOX SENDERS (sampled up to ${MAX_SENDER_SAMPLE} Inbox messages)`);
+for (const [sender, n] of senderRows) {
+  console.log(String(n).padStart(7) + "  " + sender);
+}
+
+const oldIds = await ids(`in:inbox before:${OLD_INBOX_CUTOFF} -in:trash -in:spam`, 2000);
+const old = await headers(oldIds);
+const oldSenders = new Map();
+for (const m of old) {
+  const sender = senderAddress(m.from);
+  oldSenders.set(sender, (oldSenders.get(sender) || 0) + 1);
+}
+
+console.log("\nTOP OLD-INBOX SENDERS (before 2026; sampled up to 2000)");
+for (const [sender, n] of [...oldSenders.entries()].sort((a,b) => b[1]-a[1]).slice(0,40)) {
+  console.log(String(n).padStart(7) + "  " + sender);
+}
+
+console.log("\nNO MESSAGES CHANGED.");
