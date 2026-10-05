@@ -1,5 +1,5 @@
 /**
- * V4.25 final shipping residual migration.
+ * V4.26 final shipping residual migration.
  *
  * Preview-only by default. Execution requires BOTH --apply and --yes.
  * Reclassifies known historical messages that still carry Purchases/Shipping
@@ -19,6 +19,20 @@ const SHIPPING = "Purchases/Shipping";
 const execute = process.argv.includes("--apply") && process.argv.includes("--yes");
 
 const migrations = [
+  {
+    name: "Pestie post-delivery application reminder",
+    query: 'from:hello@pestie.com subject:"Have you applied your latest shipment?"',
+    label: "Low Priority/Automated Reports",
+    archive: true,
+    important: false,
+  },
+  {
+    name: "Tophatter shipment action required",
+    query: 'from:noreply@tophatter.com subject:"Action required: Your item is waiting to be shipped"',
+    label: "Action/Delivery Problems",
+    archive: false,
+    important: true,
+  },
   {
     name: "Air Filters payment verification",
     query: 'from:support@airfiltersdelivered.com subject:"Verify your payment information"',
@@ -108,7 +122,7 @@ for (const migration of migrations) {
   }
 }
 
-console.log("V4.25 FINAL SHIPPING RESIDUAL MIGRATION");
+console.log("V4.26 FINAL SHIPPING RESIDUAL MIGRATION");
 console.log(execute ? "MODE: APPLY" : "MODE: PREVIEW");
 
 const planned = [];
