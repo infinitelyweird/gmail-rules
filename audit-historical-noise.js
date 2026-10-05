@@ -10,7 +10,10 @@ import { getAuth } from "./auth.js";
 const auth = await getAuth();
 const gmail = google.gmail({ version: "v1", auth });
 
-const MAX_SENDER_SAMPLE = 5000;
+const MAX_SENDER_SAMPLE = 1000;
+const HEADER_BATCH_SIZE = 10;
+const HEADER_BATCH_DELAY_MS = 1200;
+const RATE_LIMIT_RETRIES = 6;
 const OLD_INBOX_CUTOFF = "2026/01/01";
 
 async function count(query) {
@@ -36,11 +39,19 @@ async function ids(query, limit = MAX_SENDER_SAMPLE) {
   return out.slice(0, limit);
 }
 
-async function headers(messageIds) {
-  const out = [];
-  for (let i = 0; i < messageIds.length; i += 100) {
-    const batch = messageIds.slice(i, i + 100);
-    const rows = await Promise.all(batch.map(async id => {
+async function sleep(ms) {
+  await new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function isRateLimit(error) {
+  const reason = error?.response?.data?.error?.errors?.[0]?.reason;
+  return error?.response?.status === 429 ||
+    (error?.response?.status === 403 && reason === "rateLimitExceeded");
+}
+
+async function getMetadata(id) {
+  for (let attempt = 0; ; attempt++) {
+    try {
       const r = await gmail.users.messages.get({
         userId: "me",
         id,
@@ -50,9 +61,33 @@ async function headers(messageIds) {
       const h = Object.fromEntries(
         (r.data.payload?.headers || []).map(x => [x.name.toLowerCase(), x.value])
       );
-      return { id, from: h.from || "(unknown)", subject: h.subject || "(no subject)", date: h.date || "" };
-    }));
+      return {
+        id,
+        from: h.from || "(unknown)",
+        subject: h.subject || "(no subject)",
+        date: h.date || "",
+      };
+    } catch (error) {
+      if (!isRateLimit(error) || attempt >= RATE_LIMIT_RETRIES) throw error;
+      const waitMs = Math.min(60000, 5000 * (2 ** attempt));
+      console.log(`Rate limit reached; waiting ${Math.round(waitMs / 1000)}s before retry...`);
+      await sleep(waitMs);
+    }
+  }
+}
+
+async function headers(messageIds) {
+  const out = [];
+  for (let i = 0; i < messageIds.length; i += HEADER_BATCH_SIZE) {
+    const batch = messageIds.slice(i, i + HEADER_BATCH_SIZE);
+
+    // Intentionally small concurrency: Gmail message.get is quota-expensive.
+    const rows = await Promise.all(batch.map(id => getMetadata(id)));
     out.push(...rows);
+
+    if (i + HEADER_BATCH_SIZE < messageIds.length) {
+      await sleep(HEADER_BATCH_DELAY_MS);
+    }
   }
   return out;
 }
@@ -111,7 +146,7 @@ for (const [sender, n] of senderRows) {
   console.log(String(n).padStart(7) + "  " + sender);
 }
 
-const oldIds = await ids(`in:inbox before:${OLD_INBOX_CUTOFF} -in:trash -in:spam`, 2000);
+const oldIds = await ids(`in:inbox before:${OLD_INBOX_CUTOFF} -in:trash -in:spam`, 500);
 const old = await headers(oldIds);
 const oldSenders = new Map();
 for (const m of old) {
@@ -119,7 +154,7 @@ for (const m of old) {
   oldSenders.set(sender, (oldSenders.get(sender) || 0) + 1);
 }
 
-console.log("\nTOP OLD-INBOX SENDERS (before 2026; sampled up to 2000)");
+console.log("\nTOP OLD-INBOX SENDERS (before 2026; sampled up to 500)");
 for (const [sender, n] of [...oldSenders.entries()].sort((a,b) => b[1]-a[1]).slice(0,40)) {
   console.log(String(n).padStart(7) + "  " + sender);
 }
