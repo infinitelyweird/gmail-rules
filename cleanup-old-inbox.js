@@ -14,7 +14,7 @@ const OLD = "in:inbox before:2026/01/01 -in:trash -in:spam";
 
 const actions = [
   // Unmistakable stale social/marketing noise.
-  { name:"stayclkd PM/social notifications", q:"from:stayclkd.com", trash:true },
+  { name:"stayclkd PM/social notifications", q:"from:donotreply.jaw.disc.world@stayclkd.com", trash:true },
   { name:"myclkd story notifications", q:"from:myclkd.email", trash:true },
   { name:"Pinterest recommendations", q:"from:recommendations@discover.pinterest.com", trash:true },
   { name:"PlushCare marketing", q:'from:hello@info.plushcare.com subject:"Keeping your family healthy"', trash:true },
