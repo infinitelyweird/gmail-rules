@@ -1,7 +1,7 @@
 /**
  * Declarative Gmail filtering policy.
  *
- * V4.24.0 classifies the final residual shipping audit with sender-aware routine and exception rules.
+ * V4.26.0 closes the final two shipping residuals with narrow sender/subject classifications.
  *
  * Fields:
  *   name       Human-readable name shown by --plan.
@@ -232,6 +232,21 @@ export const rules = [
     query: 'from:payments-messages@amazon.com subject:("Shipment of your order" AND "not been confirmed")',
     archive: false,
     important: true,
+  },
+
+  // V4.26: final two residual classifications.
+  {
+    name: "Tophatter shipment action required",
+    label: "Action/Delivery Problems",
+    query: 'from:noreply@tophatter.com subject:"Action required: Your item is waiting to be shipped"',
+    archive: false,
+    important: true,
+  },
+  {
+    name: "Pestie post-delivery application reminder",
+    label: "Low Priority/Automated Reports",
+    query: 'from:hello@pestie.com subject:"Have you applied your latest shipment?"',
+    archive: true,
   },
 
   {
